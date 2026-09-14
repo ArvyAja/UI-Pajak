@@ -13,17 +13,12 @@
 <body>
     <div class="app-container">
         <!-- Left Sidebar -->
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="logo-text">
-                        <span class="logo-name">TaxPro</span>
-                        <span class="logo-subtitle">Konsultan Pajak</span>
-                    </div>
-                </div>
+                <button class="sidebar-close" onclick="toggleSidebar()">
+                    <i class="fas fa-xmark"></i>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
@@ -36,14 +31,16 @@
                         <span>Klien</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
-                    <a href="klien-pribadi.html" class="nav-item submenu">
-                        <i class="fas fa-user"></i>
-                        <span>Klien Pribadi</span>
-                    </a>
-                    <a href="klien-perusahaan.html" class="nav-item submenu">
-                        <i class="fas fa-building"></i>
-                        <span>Klien Perusahaan</span>
-                    </a>
+                    <div class="submenu-wrap">
+                        <a href="klien-pribadi.html" class="nav-item submenu">
+                            <i class="fas fa-user"></i>
+                            <span>Klien Pribadi</span>
+                        </a>
+                        <a href="klien-perusahaan.html" class="nav-item submenu">
+                            <i class="fas fa-building"></i>
+                            <span>Klien Perusahaan</span>
+                        </a>
+                    </div>
                 </div>
                 <a href="spt.html" class="nav-item">
                     <i class="fas fa-file-invoice"></i>
@@ -71,22 +68,24 @@
                         <span>Keuangan</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
-                    <a href="pendapatan.html" class="nav-item submenu">
-                        <i class="fas fa-arrow-trend-up"></i>
-                        <span>Pendapatan</span>
-                    </a>
-                    <a href="laba-rugi.html" class="nav-item submenu">
-                        <i class="fas fa-scale-balanced"></i>
-                        <span>Laba/Rugi</span>
-                    </a>
-                    <a href="piutang.html" class="nav-item submenu">
-                        <i class="fas fa-hand-holding-dollar"></i>
-                        <span>Piutang</span>
-                    </a>
-                    <a href="laporan-keuangan.html" class="nav-item submenu">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Laporan Keuangan</span>
-                    </a>
+                    <div class="submenu-wrap">
+                        <a href="pendapatan.html" class="nav-item submenu">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span>Pendapatan</span>
+                        </a>
+                        <a href="laba-rugi.html" class="nav-item submenu">
+                            <i class="fas fa-scale-balanced"></i>
+                            <span>Laba/Rugi</span>
+                        </a>
+                        <a href="piutang.html" class="nav-item submenu">
+                            <i class="fas fa-hand-holding-dollar"></i>
+                            <span>Piutang</span>
+                        </a>
+                        <a href="laporan-keuangan.html" class="nav-item submenu">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Laporan Keuangan</span>
+                        </a>
+                    </div>
                 </div>
 
                  <a href="kalender.html" class="nav-item">
@@ -119,13 +118,12 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="main-area">
+        <div class="main-area" id="mainArea">
             <!-- Header -->
             <header class="header">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari klien, NPWP, nama, atau dokumen...">
-                </div>
+                <button class="hamburger-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="header-right">
                     <div class="notification-bell">
                         <i class="fas fa-bell"></i>
@@ -639,6 +637,27 @@
         </div>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mainArea = document.getElementById('mainArea');
+            const hamburger = document.querySelector('.hamburger-btn');
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                hamburger.classList.toggle('hidden', sidebar.classList.contains('open'));
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainArea.classList.toggle('expanded');
+                hamburger.classList.toggle('hidden', !sidebar.classList.contains('collapsed'));
+            }
+        }
+
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('expanded'); }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>

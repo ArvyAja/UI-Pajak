@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -123,15 +123,12 @@
 <body>
     <div class="app-container">
         <!-- Left Sidebar -->
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="logo-text">
-                        <span class="logo-name">TaxPro</span>
-                        <span class="logo-subtitle">Konsultan Pajak</span>
-                    </div>
-                </div>
+                <button class="sidebar-close" onclick="toggleSidebar()">
+                    <i class="fas fa-xmark"></i>
+                </button>
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-item">
@@ -143,14 +140,16 @@
                         <span>Klien</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
-                    <a href="klien-pribadi.html" class="nav-item submenu">
-                        <i class="fas fa-user"></i>
-                        <span>Klien Pribadi</span>
-                    </a>
-                    <a href="klien-perusahaan.html" class="nav-item submenu">
-                        <i class="fas fa-building"></i>
-                        <span>Klien Perusahaan</span>
-                    </a>
+                    <div class="submenu-wrap">
+                        <a href="klien-pribadi.html" class="nav-item submenu">
+                            <i class="fas fa-user"></i>
+                            <span>Klien Pribadi</span>
+                        </a>
+                        <a href="klien-perusahaan.html" class="nav-item submenu">
+                            <i class="fas fa-building"></i>
+                            <span>Klien Perusahaan</span>
+                        </a>
+                    </div>
                 </div>
                 <a href="spt.html" class="nav-item">
                     <i class="fas fa-file-invoice"></i>
@@ -177,22 +176,24 @@
                         <span>Keuangan</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
-                    <a href="pendapatan.html" class="nav-item submenu">
-                        <i class="fas fa-arrow-trend-up"></i>
-                        <span>Pendapatan</span>
-                    </a>
-                    <a href="laba-rugi.html" class="nav-item submenu">
-                        <i class="fas fa-scale-balanced"></i>
-                        <span>Laba/Rugi</span>
-                    </a>
-                    <a href="piutang.html" class="nav-item submenu">
-                        <i class="fas fa-hand-holding-dollar"></i>
-                        <span>Piutang</span>
-                    </a>
-                    <a href="laporan-keuangan.html" class="nav-item submenu">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Laporan Keuangan</span>
-                    </a>
+                    <div class="submenu-wrap">
+                        <a href="pendapatan.html" class="nav-item submenu">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span>Pendapatan</span>
+                        </a>
+                        <a href="laba-rugi.html" class="nav-item submenu">
+                            <i class="fas fa-scale-balanced"></i>
+                            <span>Laba/Rugi</span>
+                        </a>
+                        <a href="piutang.html" class="nav-item submenu">
+                            <i class="fas fa-hand-holding-dollar"></i>
+                            <span>Piutang</span>
+                        </a>
+                        <a href="laporan-keuangan.html" class="nav-item submenu">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Laporan Keuangan</span>
+                        </a>
+                    </div>
                 </div>
                 <a href="kalender.html" class="nav-item active">
                     <i class="fas fa-calendar-days"></i>
@@ -223,12 +224,11 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="main-area">
+        <div class="main-area" id="mainArea">
             <header class="header">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari acara, deadline, atau klien...">
-                </div>
+                <button class="hamburger-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="header-right">
                     <div class="notification-bell">
                         <i class="fas fa-bell"></i>
@@ -454,7 +454,23 @@
     </div>
 
     <script>
-        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainArea = document.getElementById('mainArea');
+            const overlay = document.getElementById('sidebarOverlay');
+            const hamburger = document.querySelector('.hamburger-btn');
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('open');
+                if (overlay) overlay.classList.toggle('active');
+                if (hamburger) hamburger.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainArea.classList.toggle('expanded');
+                if (hamburger) hamburger.classList.toggle('hidden');
+            }
+        }
+
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('expanded'); }
         function openAddModal() { document.getElementById('addModal').classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => {

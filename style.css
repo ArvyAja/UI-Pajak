@@ -76,11 +76,73 @@ body {
     left: 0;
     bottom: 0;
     z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
 }
 
 .sidebar-header {
     padding: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+}
+
+.sidebar-close:hover {
+    background: var(--sidebar-hover);
+    color: white;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.hamburger-btn {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+    background: var(--bg-main);
 }
 
 .logo {
@@ -158,6 +220,16 @@ body {
     margin-bottom: 8px;
 }
 
+.nav-section .submenu-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.nav-section.expanded .submenu-wrap {
+    max-height: 300px;
+}
+
 .nav-section-title {
     display: flex;
     align-items: center;
@@ -169,10 +241,20 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
-.nav-section-title i {
+.nav-section-title:hover {
+    color: #94A3B8;
+}
+
+.nav-section-title i.fa-chevron-down {
+    transition: transform 0.2s;
     font-size: 10px;
+}
+
+.nav-section.expanded .nav-section-title i.fa-chevron-down {
+    transform: rotate(180deg);
 }
 
 .nav-item.submenu {
@@ -218,6 +300,15 @@ body {
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+.main-area.expanded {
+    margin-left: 0;
+}
+
+.hamburger-btn.hidden {
+    display: none;
 }
 
 /* Header */
@@ -1090,7 +1181,16 @@ code {
 
 @media (max-width: 768px) {
     .sidebar {
-        display: none;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
     }
 
     .main-area {
