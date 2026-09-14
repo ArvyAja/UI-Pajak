@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Konsultasi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-success { background: var(--success); color: white; }
+
+        /* Stats Row */
+        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; align-items: center; gap: 16px; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .stat-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .stat-icon.green { background: var(--success-bg); color: var(--success); }
+        .stat-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .stat-icon.red { background: var(--danger-bg); color: var(--danger); }
+        .stat-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .stat-change { font-size: 10px; font-weight: 600; margin-top: 4px; }
+        .stat-change.up { color: var(--success); }
+        .stat-change.down { color: var(--danger); }
+
+        /* Tab Filter */
+        .tab-filter { display: flex; gap: 4px; background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; margin-bottom: 24px; width: fit-content; }
+        .tab-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .tab-btn.active { background: var(--primary-light); color: white; }
+        .tab-btn:hover:not(.active) { background: var(--bg-main); }
+        .tab-btn .count { background: rgba(255,255,255,0.2); padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; }
+        .tab-btn.active .count { background: rgba(255,255,255,0.3); }
+        .tab-btn:not(.active) .count { background: var(--bg-main); color: var(--text-muted); }
+
+        /* Main Grid */
+        .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+
+        /* Timeline */
+        .timeline-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .section-title .dot.blue { background: var(--blue); }
+        .section-title .dot.green { background: var(--success); }
+        .section-title .dot.amber { background: var(--amber); }
+        .timeline-body { padding: 20px; }
+        .timeline-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .timeline-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* Konsul Card */
+        .konsul-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; transition: all 0.2s; cursor: pointer; position: relative; }
+        .konsul-card:hover { border-color: var(--primary-light); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08); }
+        .konsul-card:last-child { margin-bottom: 0; }
+        .konsul-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+        .konsul-time { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); min-width: 55px; }
+        .konsul-time span { font-size: 10px; font-weight: 500; color: var(--text-muted); display: block; }
+        .konsul-info { flex: 1; margin-left: 12px; }
+        .konsul-client { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .konsul-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .konsul-avatar.blue { background: #EFF6FF; color: var(--blue); }
+        .konsul-avatar.green { background: var(--success-bg); color: var(--success); }
+        .konsul-avatar.purple { background: #EEF2FF; color: var(--purple); }
+        .konsul-avatar.amber { background: var(--warning-bg); color: var(--amber); }
+        .konsul-avatar.red { background: var(--danger-bg); color: var(--danger); }
+        .konsul-avatar.indigo { background: #EEF2FF; color: var(--indigo); }
+        .konsul-avatar.teal { background: #F0FDFA; color: #0D9488; }
+        .konsul-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .konsul-topik { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .konsul-badges { display: flex; gap: 6px; flex-shrink: 0; }
+        .badge { padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+        .badge-pribadi { background: #EFF6FF; color: var(--blue); }
+        .badge-perusahaan { background: var(--success-bg); color: var(--success); }
+        .badge-berlangsung { background: #FEF3C7; color: #D97706; }
+        .badge-mendatang { background: #EEF2FF; color: var(--indigo); }
+        .badge-selesai { background: var(--success-bg); color: var(--success); }
+        .badge-dibatalkan { background: var(--bg-main); color: var(--text-muted); }
+        .konsul-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; padding-left: 40px; }
+        .konsul-actions { display: flex; gap: 8px; padding-left: 40px; margin-top: 10px; }
+        .konsul-action { padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 10px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .konsul-action:hover { background: var(--bg-main); border-color: var(--primary-light); color: var(--primary-light); }
+        .konsul-action.primary { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+        .konsul-action.primary:hover { background: var(--primary); }
+
+        /* Right Sidebar */
+        .right-sidebar { display: flex; flex-direction: column; gap: 24px; }
+
+        /* Jadwal List */
+        .jadwal-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .jadwal-list { padding: 16px 20px; }
+        .jadwal-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-main); border-radius: var(--radius); margin-bottom: 8px; border-left: 3px solid; transition: all 0.2s; }
+        .jadwal-item.urgent { border-left-color: var(--danger); }
+        .jadwal-item.soon { border-left-color: var(--amber); }
+        .jadwal-item.normal { border-left-color: var(--blue); }
+        .jadwal-item:last-child { margin-bottom: 0; }
+        .jadwal-date { text-align: center; min-width: 44px; }
+        .jadwal-date .day { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .jadwal-date .month { font-size: 9px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+        .jadwal-info { flex: 1; }
+        .jadwal-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .jadwal-topic { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .jadwal-time { font-size: 10px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+        .jadwal-badge { font-size: 9px; padding: 2px 6px; border-radius: 8px; font-weight: 600; flex-shrink: 0; }
+
+        /* Calendar Widget */
+        .calendar-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .calendar-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .calendar-nav { display: flex; align-items: center; gap: 12px; }
+        .calendar-nav button { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 10px; }
+        .calendar-nav button:hover { background: var(--bg-main); }
+        .calendar-month { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; }
+        .calendar-grid { padding: 16px 20px; }
+        .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 8px; }
+        .calendar-weekday { text-align: center; font-size: 9px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; padding: 4px 0; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .calendar-day { text-align: center; padding: 8px 4px; font-size: 11px; border-radius: 6px; cursor: pointer; position: relative; color: var(--text-primary); font-weight: 500; }
+        .calendar-day:hover { background: var(--bg-main); }
+        .calendar-day.other-month { color: var(--text-muted); opacity: 0.5; }
+        .calendar-day.today { background: var(--primary-light); color: white; font-weight: 700; }
+        .calendar-day.has-event { font-weight: 700; }
+        .calendar-day.event-pribadi { background: #EFF6FF; color: var(--blue); }
+        .calendar-day.event-pribadi.today { background: var(--primary-light); color: white; }
+        .calendar-day.event-perusahaan { background: var(--success-bg); color: var(--success); }
+        .calendar-day.event-perusahaan.today { background: var(--primary-light); color: white; }
+        .calendar-day.event-both { background: linear-gradient(135deg, #EFF6FF 50%, var(--success-bg) 50%); color: var(--text-primary); }
+        .calendar-day.event-both.today { background: var(--primary-light); color: white; }
+        .event-dot { width: 4px; height: 4px; border-radius: 50%; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); }
+        .event-dot.blue { background: var(--blue); }
+        .event-dot.green { background: var(--success); }
+        .event-dot.both { background: linear-gradient(90deg, var(--blue) 50%, var(--success) 50%); width: 8px; border-radius: 2px; }
+        .calendar-day.today .event-dot { background: white; }
+        .calendar-day.today .event-dot.both { background: white; }
+
+        /* Calendar Legend */
+        .calendar-legend { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-top: 1px solid var(--border); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-muted); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+        .legend-dot.blue { background: var(--blue); }
+        .legend-dot.green { background: var(--success); }
+
+        /* History Section */
+        .history-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-top: 24px; }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th { text-align: left; padding: 12px 16px; font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+        .history-table td { padding: 12px 16px; font-size: 12px; color: var(--text-primary); border-bottom: 1px solid var(--border); }
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover td { background: var(--bg-main); }
+        .history-client { display: flex; align-items: center; gap: 8px; }
+        .history-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: var(--radius-lg); width: 100%; max-width: 520px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; border: none; background: var(--bg-main); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary-light); }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); }
+
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Klien</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="klien-pribadi.html" class="nav-item submenu"><i class="fas fa-user"></i><span>Klien Pribadi</span></a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu"><i class="fas fa-building"></i><span>Klien Perusahaan</span></a>
+                </div>
+                <a href="spt.html" class="nav-item"><i class="fas fa-file-invoice"></i><span>SPT & Pelaporan</span></a>
+                <a href="konsultasi.html" class="nav-item active"><i class="fas fa-comments"></i><span>Konsultasi</span></a>
+                <a href="dokumen.html" class="nav-item"><i class="fas fa-folder-open"></i><span>Dokumen</span></a>
+                <a href="ai-assistant.html" class="nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="kalkulator.html" class="nav-item"><i class="fas fa-calculator"></i><span>Kalkulator Pajak</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Keuangan</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="pendapatan.html" class="nav-item submenu"><i class="fas fa-arrow-trend-up"></i><span>Pendapatan</span></a>
+
+                    <a href="laba-rugi.html" class="nav-item submenu"><i class="fas fa-scale-balanced"></i><span>Laba/Rugi</span></a>
+                     <a href="piutang.html" class="nav-item submenu"><i class="fas fa-hand-holding-dollar"></i><span>Piutang</span></a>
+                     <a href="laporan-keuangan.html" class="nav-item submenu"><i class="fas fa-chart-pie"></i><span>Laporan Keuangan</span></a>
+                </div>
+                 <a href="kalender.html" class="nav-item"><i class="fas fa-calendar-days"></i><span>Kalender</span></a>
+                 <a href="laporan.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+                <a href="peraturan.html" class="nav-item"><i class="fas fa-gavel"></i><span>Peraturan Pajak</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-gear"></i><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration"><div class="illustration-icon"><i class="fas fa-file-invoice-dollar"></i><i class="fas fa-shield-halved"></i></div></div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Cari klien, topik, atau catatan..."></div>
+                <div class="header-right">
+                    <div class="notification-bell"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Admin Konsultan Pajak</span></div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-comments" style="color: var(--primary-light); margin-right: 8px;"></i> Konsultasi</h1>
+                        <p>Jadwal dan riwayat konsultasi pajak dengan seluruh klien</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Sesi Baru</button>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-comments"></i></div>
+                        <div>
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Total Konsultasi Aktif</div>
+                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> +3 dari bulan lalu</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Mendatang</div>
+                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> +2 minggu ini</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Selesai Bulan Ini</div>
+                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> +12 dari bulan lalu</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
+                        <div>
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Dibatalkan</div>
+                            <div class="stat-change down"><i class="fas fa-arrow-down"></i> -1 dari bulan lalu</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-star"></i></div>
+                        <div>
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Rating Kepuasan</div>
+                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> +0.2 dari bulan lalu</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Filter -->
+                <div class="tab-filter">
+                    <button class="tab-btn active" onclick="filterTab(this, 'semua')">
+                        Semua <span class="count">23</span>
+                    </button>
+                    <button class="tab-btn" onclick="filterTab(this, 'pribadi')">
+                        <i class="fas fa-user"></i> Pribadi <span class="count">12</span>
+                    </button>
+                    <button class="tab-btn" onclick="filterTab(this, 'perusahaan')">
+                        <i class="fas fa-building"></i> Perusahaan <span class="count">11</span>
+                    </button>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="main-grid">
+                    <!-- Left: Timeline -->
+                    <div>
+                        <div class="timeline-section">
+                            <div class="section-header">
+                                <div class="section-title">
+                                    <div class="dot blue"></div>
+                                    Hari Ini — Senin, 28 April 2025
+                                </div>
+                                <button class="btn btn-sm btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+                            </div>
+                            <div class="timeline-body">
+                                <!-- Hari Ini -->
+                                <div class="timeline-label">Konsultasi Hari Ini</div>
+
+                                <div class="konsul-card" data-type="perusahaan">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">09:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar green">MJ</div>
+                                                <div>
+                                                    <div class="konsul-name">PT Maju Jaya</div>
+                                                    <div class="konsul-topik">Rekonsiliasi PPN 1111 — Masa April 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-berlangsung">Berlangsung</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Review rekonsiliasi faktur pajak masukan vs keluaran dan validasi e-Faktur sebelum pelaporan.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action primary"><i class="fas fa-comment"></i> Chat</button>
+                                        <button class="konsul-action"><i class="fas fa-file-alt"></i> Dokumen</button>
+                                        <button class="konsul-action"><i class="fas fa-video"></i> Video Call</button>
+                                        <button class="konsul-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="konsul-card" data-type="pribadi">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">14:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar blue">BS</div>
+                                                <div>
+                                                    <div class="konsul-name">Budi Santoso</div>
+                                                    <div class="konsul-topik">SPT Tahunan 1770 — Tahun Pajak 2024</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-mendatang">14:00</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Konsultasi pengisian SPT Tahunan 1770 untuk tahun pajak 2024, termasuk pelaporan penghasilan dari beberapa sumber.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action primary"><i class="fas fa-comment"></i> Chat</button>
+                                        <button class="konsul-action"><i class="fas fa-file-alt"></i> Dokumen</button>
+                                        <button class="konsul-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="konsul-card" data-type="perusahaan">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">16:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar purple">GS</div>
+                                                <div>
+                                                    <div class="konsul-name">PT Global Solusi</div>
+                                                    <div class="konsul-topik">Konsultasi Tax Planning Q3 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-mendatang">16:00</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Perencanaan strategi penghematan pajak untuk quarter ketiga tahun 2025.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action primary"><i class="fas fa-comment"></i> Chat</button>
+                                        <button class="konsul-action"><i class="fas fa-video"></i> Video Call</button>
+                                        <button class="konsul-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Besok -->
+                                <div class="timeline-label" style="margin-top: 24px;">Besok — Selasa, 29 April 2025</div>
+
+                                <div class="konsul-card" data-type="pribadi">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">10:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar indigo">SR</div>
+                                                <div>
+                                                    <div class="konsul-name">Siti Rahayu, S.E.</div>
+                                                    <div class="konsul-topik">PPh 23 Jasa Konsultasi</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-mendatang">Mendatang</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Pembahasan pemotongan PPh 23 atas jasa konsultasi dan strategi penghematan pajak yang legal.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action primary"><i class="fas fa-comment"></i> Chat</button>
+                                        <button class="konsul-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="konsul-card" data-type="perusahaan">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">13:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar amber">SA</div>
+                                                <div>
+                                                    <div class="konsul-name">CV Sejahtera Abadi</div>
+                                                    <div class="konsul-topik">SPT Tahunan 1771</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-mendatang">Mendatang</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Pembahasan pengisian SPT Tahunan 1771 dengan koreksi fiskal positif atas penyusuaian aset.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action primary"><i class="fas fa-comment"></i> Chat</button>
+                                        <button class="konsul-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Selesai -->
+                                <div class="timeline-label" style="margin-top: 24px;">Selesai</div>
+
+                                <div class="konsul-card" data-type="pribadi" style="opacity: 0.7;">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">09:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar teal">AH</div>
+                                                <div>
+                                                    <div class="konsul-name">Ahmad Hidayat</div>
+                                                    <div class="konsul-topik">Konsultasi Usaha Mikro</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-selesai">Selesai</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Pembahasan kewajiban pajak untuk usaha mikro termasuk PPh Final dan insentif UMKM.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action"><i class="fas fa-eye"></i> Detail</button>
+                                    </div>
+                                </div>
+
+                                <div class="konsul-card" data-type="perusahaan" style="opacity: 0.7;">
+                                    <div class="konsul-card-top">
+                                        <div class="konsul-time">11:00<span>WIB</span></div>
+                                        <div class="konsul-info">
+                                            <div class="konsul-client">
+                                                <div class="konsul-avatar red">PK</div>
+                                                <div>
+                                                    <div class="konsul-name">PT Prima Karya</div>
+                                                    <div class="konsul-topik">Restitusi PPN</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="konsul-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-dibatalkan">Dibatalkan</span>
+                                        </div>
+                                    </div>
+                                    <div class="konsul-desc">Konsultasi pengajuan restitusi PPN atas lebih bayar faktur pajak masukan.</div>
+                                    <div class="konsul-actions">
+                                        <button class="konsul-action"><i class="fas fa-eye"></i> Detail</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="right-sidebar">
+                        <!-- Jadwal Mendatang -->
+                        <div class="jadwal-section">
+                            <div class="section-header">
+                                <div class="section-title">
+                                    <div class="dot amber"></div>
+                                    Jadwal Mendatang
+                                </div>
+                                <a href="#" style="font-size: 11px; color: var(--primary-light); text-decoration: none;">Lihat Semua</a>
+                            </div>
+                            <div class="jadwal-list">
+                                <div class="jadwal-item urgent">
+                                    <div class="jadwal-date">
+                                        <div class="day">28</div>
+                                        <div class="month">Apr</div>
+                                    </div>
+                                    <div class="jadwal-info">
+                                        <div class="jadwal-name">PT Maju Jaya</div>
+                                        <div class="jadwal-topic">Rekonsiliasi PPN</div>
+                                    </div>
+                                    <div class="jadwal-time"><i class="fas fa-clock"></i> 09:00</div>
+                                    <span class="jadwal-badge badge-perusahaan">Perusahaan</span>
+                                </div>
+                                <div class="jadwal-item urgent">
+                                    <div class="jadwal-date">
+                                        <div class="day">28</div>
+                                        <div class="month">Apr</div>
+                                    </div>
+                                    <div class="jadwal-info">
+                                        <div class="jadwal-name">Budi Santoso</div>
+                                        <div class="jadwal-topic">SPT Tahunan 1770</div>
+                                    </div>
+                                    <div class="jadwal-time"><i class="fas fa-clock"></i> 14:00</div>
+                                    <span class="jadwal-badge badge-pribadi">Pribadi</span>
+                                </div>
+                                <div class="jadwal-item soon">
+                                    <div class="jadwal-date">
+                                        <div class="day">29</div>
+                                        <div class="month">Apr</div>
+                                    </div>
+                                    <div class="jadwal-info">
+                                        <div class="jadwal-name">Siti Rahayu</div>
+                                        <div class="jadwal-topic">PPh 23 Jasa</div>
+                                    </div>
+                                    <div class="jadwal-time"><i class="fas fa-clock"></i> 10:00</div>
+                                    <span class="jadwal-badge badge-pribadi">Pribadi</span>
+                                </div>
+                                <div class="jadwal-item soon">
+                                    <div class="jadwal-date">
+                                        <div class="day">02</div>
+                                        <div class="month">Mei</div>
+                                    </div>
+                                    <div class="jadwal-info">
+                                        <div class="jadwal-name">PT Global Solusi</div>
+                                        <div class="jadwal-topic">Tax Planning PPh 25</div>
+                                    </div>
+                                    <div class="jadwal-time"><i class="fas fa-clock"></i> 09:00</div>
+                                    <span class="jadwal-badge badge-perusahaan">Perusahaan</span>
+                                </div>
+                                <div class="jadwal-item normal">
+                                    <div class="jadwal-date">
+                                        <div class="day">03</div>
+                                        <div class="month">Mei</div>
+                                    </div>
+                                    <div class="jadwal-info">
+                                        <div class="jadwal-name">CV Sejahtera</div>
+                                        <div class="jadwal-topic">SPT Tahunan 1771</div>
+                                    </div>
+                                    <div class="jadwal-time"><i class="fas fa-clock"></i> 13:00</div>
+                                    <span class="jadwal-badge badge-perusahaan">Perusahaan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Widget -->
+                        <div class="calendar-section">
+                            <div class="calendar-header">
+                                <div class="calendar-nav">
+                                    <button onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
+                                    <span class="calendar-month" id="calendarMonth">April 2025</span>
+                                    <button onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <button class="btn btn-sm btn-secondary">Hari Ini</button>
+                            </div>
+                            <div class="calendar-grid">
+                                <div class="calendar-weekdays">
+                                    <div class="calendar-weekday">Min</div>
+                                    <div class="calendar-weekday">Sen</div>
+                                    <div class="calendar-weekday">Sel</div>
+                                    <div class="calendar-weekday">Rab</div>
+                                    <div class="calendar-weekday">Kam</div>
+                                    <div class="calendar-weekday">Jum</div>
+                                    <div class="calendar-weekday">Sab</div>
+                                </div>
+                                <div class="calendar-days" id="calendarDays"></div>
+                            </div>
+                            <div class="calendar-legend">
+                                <div class="legend-item"><div class="legend-dot blue"></div> Pribadi</div>
+                                <div class="legend-item"><div class="legend-dot green"></div> Perusahaan</div>
+                                <div class="legend-item"><div class="legend-dot" style="background: linear-gradient(90deg, var(--blue), var(--success));"></div> Keduanya</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Table -->
+                <div class="history-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="dot green"></div>
+                            Riwayat Konsultasi
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-sm btn-secondary"><i class="fas fa-download"></i> Export</button>
+                        </div>
+                    </div>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Klien</th>
+                                <th>Jenis</th>
+                                <th>Topik</th>
+                                <th>Status</th>
+                                <th>Durasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>26 Apr 2025</td>
+                                <td>
+                                    <div class="history-client">
+                                        <div class="history-avatar" style="background: var(--success-bg); color: var(--success);">SA</div>
+                                        <span>CV Sejahtera Abadi</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-perusahaan">Perusahaan</span></td>
+                                <td>SPT Tahunan 1771</td>
+                                <td><span class="badge badge-selesai">Selesai</span></td>
+                                <td>1 jam 15 menit</td>
+                            </tr>
+                            <tr>
+                                <td>25 Apr 2025</td>
+                                <td>
+                                    <div class="history-client">
+                                        <div class="history-avatar" style="background: #EEF2FF; color: var(--indigo);">SR</div>
+                                        <span>Siti Rahayu, S.E.</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-pribadi">Pribadi</span></td>
+                                <td>PPh 23 Jasa Konsultasi</td>
+                                <td><span class="badge badge-selesai">Selesai</span></td>
+                                <td>45 menit</td>
+                            </tr>
+                            <tr>
+                                <td>25 Apr 2025</td>
+                                <td>
+                                    <div class="history-client">
+                                        <div class="history-avatar" style="background: var(--success-bg); color: var(--success);">GS</div>
+                                        <span>PT Global Solusi</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-perusahaan">Perusahaan</span></td>
+                                <td>Rekonsiliasi PPh 21</td>
+                                <td><span class="badge badge-selesai">Selesai</span></td>
+                                <td>2 jam</td>
+                            </tr>
+                            <tr>
+                                <td>24 Apr 2025</td>
+                                <td>
+                                    <div class="history-client">
+                                        <div class="history-avatar" style="background: var(--danger-bg); color: var(--danger);">PK</div>
+                                        <span>PT Prima Karya</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-perusahaan">Perusahaan</span></td>
+                                <td>Restitusi PPN</td>
+                                <td><span class="badge badge-dibatalkan">Dibatalkan</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>24 Apr 2025</td>
+                                <td>
+                                    <div class="history-client">
+                                        <div class="history-avatar" style="background: #EFF6FF; color: var(--blue);">BS</div>
+                                        <span>Budi Santoso</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-pribadi">Pribadi</span></td>
+                                <td>Konsultasi PPh 21</td>
+                                <td><span class="badge badge-selesai">Selesai</span></td>
+                                <td>1 jam</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sesi Baru -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Buat Sesi Konsultasi Baru</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Jenis Klien</label>
+                        <select class="form-select" id="jenisKlien" onchange="filterKlien()">
+                            <option value="">Pilih jenis klien</option>
+                            <option value="pribadi">Pribadi (OP)</option>
+                            <option value="perusahaan">Perusahaan (PT/CV/UD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Klien</label>
+                        <select class="form-select" id="daftarKlien">
+                            <option value="">Pilih klien</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Topik Konsultasi</label>
+                    <input type="text" class="form-input" placeholder="Contoh: SPT Tahunan, PPN, PPh 21, Tax Planning">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu</label>
+                        <input type="time" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-textarea" placeholder="Jelaskan topik yang akan dibahas..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal()"><i class="fas fa-plus"></i> Buat Sesi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal
+        function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay')?.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+        // Tab Filter
+        function filterTab(btn, type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.konsul-card').forEach(card => {
+                if (type === 'semua') { card.style.display = ''; return; }
+                card.style.display = card.dataset.type === type ? '' : 'none';
+            });
+        }
+
+        // Klien filter
+        const klienData = {
+            pribadi: ['Budi Santoso', 'Siti Rahayu, S.E.', 'Ahmad Hidayat', 'Dewi Lestari', 'Rudi Hermawan'],
+            perusahaan: ['PT Maju Jaya', 'PT Global Solusi', 'CV Sejahtera Abadi', 'PT Prima Karya', 'UD Sinar Mandiri']
+        };
+        function filterKlien() {
+            const jenis = document.getElementById('jenisKlien').value;
+            const select = document.getElementById('daftarKlien');
+            select.innerHTML = '<option value="">Pilih klien</option>';
+            if (jenis && klienData[jenis]) {
+                klienData[jenis].forEach(k => { const opt = document.createElement('option'); opt.value = k; opt.textContent = k; select.appendChild(opt); });
+            }
+        }
+
+        // Calendar
+        const eventDates = {
+            28: { type: 'both', pribadi: ['Budi Santoso'], perusahaan: ['PT Maju Jaya'] },
+            29: { type: 'pribadi', pribadi: ['Siti Rahayu'] },
+            30: { type: 'pribadi', pribadi: ['Dewi Lestari'] },
+            2: { type: 'perusahaan', perusahaan: ['PT Global Solusi'] },
+            3: { type: 'perusahaan', perusahaan: ['CV Sejahtera'] },
+            5: { type: 'both', pribadi: ['Rudi Hermawan'], perusahaan: ['PT Prima Karya'] },
+            12: { type: 'pribadi', pribadi: ['Budi Santoso'] },
+            15: { type: 'perusahaan', perusahaan: ['PT Maju Jaya'] },
+            20: { type: 'perusahaan', perusahaan: ['UD Sinar Mandiri'] }
+        };
+
+        let currentMonth = 3; // April (0-indexed)
+        let currentYear = 2025;
+
+        function renderCalendar() {
+            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            document.getElementById('calendarMonth').textContent = monthNames[currentMonth] + ' ' + currentYear;
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+            let html = '';
+
+            // Previous month
+            for (let i = firstDay - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other-month">${daysInPrevMonth - i}</div>`;
+            }
+
+            // Current month
+            for (let d = 1; d <= daysInMonth; d++) {
+                const event = eventDates[d];
+                let cls = 'calendar-day';
+                if (d === 28 && currentMonth === 3 && currentYear === 2025) cls += ' today';
+                if (event) {
+                    cls += ' has-event event-' + event.type;
+                }
+                let dot = '';
+                if (event) {
+                    if (event.type === 'both') dot = '<div class="event-dot both"></div>';
+                    else if (event.type === 'pribadi') dot = '<div class="event-dot blue"></div>';
+                    else dot = '<div class="event-dot green"></div>';
+                }
+                html += `<div class="${cls}" title="${event ? (event.pribadi ? 'Pribadi: ' + event.pribadi.join(', ') : '') + (event.perusahaan ? (event.pribadi ? ' | ' : '') + 'Perusahaan: ' + event.perusahaan.join(', ') : '') : ''}">${d}${dot}</div>`;
+            }
+
+            // Next month
+            const totalCells = firstDay + daysInMonth;
+            const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            for (let i = 1; i <= remaining; i++) {
+                html += `<div class="calendar-day other-month">${i}</div>`;
+            }
+
+            document.getElementById('calendarDays').innerHTML = html;
+        }
+
+        function prevMonth() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
+        function nextMonth() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(); }
+
+        // Toggle submenu
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Init
+        renderCalendar();
+    </script>
+</body>
+</html>

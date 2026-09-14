@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Dashboard Konsultan Pajak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Klien</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="klien-pribadi.html" class="nav-item submenu">
+                        <i class="fas fa-user"></i>
+                        <span>Klien Pribadi</span>
+                    </a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu">
+                        <i class="fas fa-building"></i>
+                        <span>Klien Perusahaan</span>
+                    </a>
+                </div>
+                <a href="spt.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>SPT & Pelaporan</span>
+                </a>
+                <a href="konsultasi.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Konsultasi</span>
+                </a>
+                <a href="dokumen.html" class="nav-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Dokumen</span>
+                </a>
+                <a href="ai-assistant.html" class="nav-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="kalkulator.html" class="nav-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>Kalkulator Pajak</span>
+                </a>
+
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Keuangan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="pendapatan.html" class="nav-item submenu">
+                        <i class="fas fa-arrow-trend-up"></i>
+                        <span>Pendapatan</span>
+                    </a>
+                    <a href="laba-rugi.html" class="nav-item submenu">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Laba/Rugi</span>
+                    </a>
+                    <a href="piutang.html" class="nav-item submenu">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                        <span>Piutang</span>
+                    </a>
+                    <a href="laporan-keuangan.html" class="nav-item submenu">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Laporan Keuangan</span>
+                    </a>
+                </div>
+
+                 <a href="kalender.html" class="nav-item">
+                     <i class="fas fa-calendar-days"></i>
+                     <span>Kalender</span>
+                 </a>
+                <a href="laporan.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="peraturan.html" class="nav-item">
+                    <i class="fas fa-gavel"></i>
+                    <span>Peraturan Pajak</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration">
+                    <div class="illustration-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <!-- Header -->
+            <header class="header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari klien, NPWP, nama, atau dokumen...">
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Andi" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <span class="user-name">Admin</span>
+                            <span class="user-role">Admin Konsultan Pajak</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Scrollable -->
+            <div class="content-wrapper">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <div class="welcome-text">
+                        <h1>Selamat Datang, Admin!</h1>
+                        <p>Berikut ringkasan kinerja dan kondisi keuangan kantor konsultan pajak Anda.</p>
+                    </div>
+                    <div class="date-range">
+                        <i class="fas fa-calendar-days"></i>
+                        <span>1 Apr 2025 – 30 Apr 2025</span>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Total Klien</span>
+                            <span class="kpi-value">48</span>
+                            <span class="kpi-trend up">
+                                <i class="fas fa-arrow-up"></i> 12% dari bulan lalu
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon indigo">
+                            <i class="fas fa-file-check"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">SPT Terlapor</span>
+                            <span class="kpi-value">36</span>
+                            <span class="kpi-trend up">
+                                <i class="fas fa-arrow-up"></i> 20% dari bulan lalu
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon green">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Total Pendapatan</span>
+                            <span class="kpi-value">Rp 125.750.000</span>
+                            <span class="kpi-trend up">
+                                <i class="fas fa-arrow-up"></i> 15% dari bulan lalu
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon emerald">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Laba Bersih</span>
+                            <span class="kpi-value">Rp 82.400.000</span>
+                            <span class="kpi-trend up">
+                                <i class="fas fa-arrow-up"></i> 18% dari bulan lalu
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Deadline / Perhatian</span>
+                            <span class="kpi-value">7</span>
+                            <span class="kpi-trend down">
+                                <i class="fas fa-arrow-down"></i> 3% dari bulan lalu
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="charts-row">
+                    <div class="chart-card large">
+                        <div class="card-header">
+                            <div>
+                                <h3>Pendapatan vs Laba Bersih</h3>
+                                <p>Perbandingan pendapatan dan laba bersih dalam 6 bulan terakhir</p>
+                            </div>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot blue"></span> Pendapatan</span>
+                                <span class="legend-item"><span class="dot green"></span> Laba Bersih</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pendapatanLabaChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Komposisi Pendapatan</h3>
+                                <p>Berdasarkan jenis layanan pajak dan konsultasi</p>
+                            </div>
+                        </div>
+                        <div class="chart-container donut-container">
+                            <canvas id="komposisiChart"></canvas>
+                            <div class="donut-center">
+                                <span class="donut-label">Total Pendapatan</span>
+                                <span class="donut-value">Rp 125,7 jt</span>
+                            </div>
+                        </div>
+                        <div class="komposisi-legend">
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot indigo"></span> Pelaporan SPT</span>
+                                <span class="legend-percent">32%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot blue"></span> Konsultasi Pajak</span>
+                                <span class="legend-percent">24%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot purple"></span> Perencanaan Pajak</span>
+                                <span class="legend-percent">18%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot amber"></span> Audit Pajak</span>
+                                <span class="legend-percent">14%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot gray"></span> Lainnya</span>
+                                <span class="legend-percent">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ringkasan Keuangan -->
+                <div class="ringkasan-keuangan">
+                    <h3>Ringkasan Keuangan</h3>
+                    <p>Performa keuangan kantor konsultan pajak</p>
+                    <div class="ringkasan-grid">
+                        <div class="ringkasan-item">
+                            <span class="ringkasan-label">Total Pendapatan</span>
+                            <span class="ringkasan-value">Rp 125.750.000</span>
+                            <span class="ringkasan-trend up"><i class="fas fa-arrow-up"></i> 15%</span>
+                        </div>
+                        <div class="ringkasan-item">
+                            <span class="ringkasan-label">Total Pengeluaran</span>
+                            <span class="ringkasan-value">Rp 43.350.000</span>
+                            <span class="ringkasan-trend down"><i class="fas fa-arrow-down"></i> 8%</span>
+                        </div>
+                        <div class="ringkasan-item">
+                            <span class="ringkasan-label">Laba Bersih</span>
+                            <span class="ringkasan-value">Rp 82.400.000</span>
+                            <span class="ringkasan-trend up"><i class="fas fa-arrow-up"></i> 18%</span>
+                        </div>
+                        <div class="ringkasan-item">
+                            <span class="ringkasan-label">Margin Laba</span>
+                            <span class="ringkasan-value">65,5%</span>
+                            <span class="ringkasan-trend up"><i class="fas fa-arrow-up"></i> 5,2%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="charts-row three-cols">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Tren Pendapatan & Laba Bersih</h3>
+                                <p>Dalam 12 bulan terakhir</p>
+                            </div>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot blue"></span> Pendapatan</span>
+                                <span class="legend-item"><span class="dot green"></span> Laba Bersih</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trenChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Perbandingan Pendapatan vs Pengeluaran</h3>
+                                <p>Dalam 6 bulan terakhir</p>
+                            </div>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot blue"></span> Pendapatan</span>
+                                <span class="legend-item"><span class="dot gray"></span> Pengeluaran</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="perbandinganChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card laba-rugi-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Laba Rugi (April 2025)</h3>
+                            </div>
+                        </div>
+                        <div class="laba-rugi-content">
+                            <div class="lr-row">
+                                <span class="lr-label">Pendapatan</span>
+                                <span class="lr-value">Rp 125.750.000</span>
+                            </div>
+                            <div class="lr-row">
+                                <span class="lr-label">Pengeluaran</span>
+                                <span class="lr-value">Rp 43.350.000</span>
+                            </div>
+                            <div class="lr-divider"></div>
+                            <div class="lr-row total">
+                                <span class="lr-label">Laba Bersih</span>
+                                <span class="lr-value green">Rp 82.400.000</span>
+                            </div>
+                            <div class="lr-trend">
+                                <i class="fas fa-arrow-up"></i> 18% dari bulan lalu
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Table + Right Sidebar -->
+                <div class="bottom-row">
+                    <!-- Tabel Klien -->
+                    <div class="table-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Klien dengan Pendapatan Tertinggi</h3>
+                            </div>
+                            <a href="#" class="link">Lihat Semua</a>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Klien</th>
+                                        <th>NPWP</th>
+                                        <th>Jenis Usaha</th>
+                                        <th>Pendapatan (Rp)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar">MJ</div>
+                                                <span>PT Maju Jaya</span>
+                                            </div>
+                                        </td>
+                                        <td><code>12.345.678.9-0001.000</code></td>
+                                        <td>Perdagangan</td>
+                                        <td class="amount">28.500.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar green">GS</div>
+                                                <span>PT Global Solusi</span>
+                                            </div>
+                                        </td>
+                                        <td><code>11.222.333.4-0003.000</code></td>
+                                        <td>Industri</td>
+                                        <td class="amount">22.750.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar purple">SA</div>
+                                                <span>CV Sejahtera Abadi</span>
+                                            </div>
+                                        </td>
+                                        <td><code>98.765.432.1-0002.000</code></td>
+                                        <td>Jasa Konsultasi</td>
+                                        <td class="amount">18.900.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar amber">PK</div>
+                                                <span>PT Prima Karya</span>
+                                            </div>
+                                        </td>
+                                        <td><code>22.333.444.5-0004.000</code></td>
+                                        <td>Konstruksi</td>
+                                        <td class="amount">16.500.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar red">SM</div>
+                                                <span>UD Sinar Mandiri</span>
+                                            </div>
+                                        </td>
+                                        <td><code>33.444.555.6-0005.000</code></td>
+                                        <td>Perdagangan</td>
+                                        <td class="amount">12.300.000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="right-sidebar">
+                        <!-- Aktivitas Terbaru -->
+                        <div class="activity-card">
+                            <div class="card-header">
+                                <h3>Aktivitas Terbaru</h3>
+                                <a href="#" class="link">Lihat Semua</a>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon blue">
+                                        <i class="fas fa-file-invoice"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>SPT Masa PPN - PT Maju Jaya</strong></p>
+                                        <span>Berhasil dilaporkan</span>
+                                    </div>
+                                    <span class="activity-time">2 jam lalu</span>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon green">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>Invoice #INV-0048</strong></p>
+                                        <span>Dibayar oleh PT Global Solusi</span>
+                                    </div>
+                                    <span class="activity-time">4 jam lalu</span>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon purple">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>Konsultasi Pajak - CV Sejahtera Abadi</strong></p>
+                                        <span>Selesai</span>
+                                    </div>
+                                    <span class="activity-time">6 jam lalu</span>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon amber">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>Dokumen NPWP - PT Prima Karya</strong></p>
+                                        <span>Diunggah oleh klien</span>
+                                    </div>
+                                    <span class="activity-time">8 jam lalu</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tugas & Deadline -->
+                        <div class="task-card">
+                            <div class="card-header">
+                                <h3>Tugas & Deadline</h3>
+                                <a href="#" class="link">Lihat Semua</a>
+                            </div>
+                            <div class="task-list">
+                                <div class="task-item">
+                                    <div class="task-icon red">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div class="task-content">
+                                        <p><strong>SPT Tahunan - PT Maju Jaya</strong></p>
+                                        <span>30 Apr 2025</span>
+                                    </div>
+                                    <span class="task-badge red">Mendesak</span>
+                                </div>
+                                <div class="task-item">
+                                    <div class="task-icon amber">
+                                        <i class="fas fa-money-bill"></i>
+                                    </div>
+                                    <div class="task-content">
+                                        <p><strong>PPh 21 - CV Sejahtera Abadi</strong></p>
+                                        <span>2 Mei 2025</span>
+                                    </div>
+                                    <span class="task-badge amber">Dalam Proses</span>
+                                </div>
+                                <div class="task-item">
+                                    <div class="task-icon blue">
+                                        <i class="fas fa-file-invoice"></i>
+                                    </div>
+                                    <div class="task-content">
+                                        <p><strong>SPT Masa PPN - PT Global Solusi</strong></p>
+                                        <span>5 Mei 2025</span>
+                                    </div>
+                                    <span class="task-badge amber">Dalam Proses</span>
+                                </div>
+                                <div class="task-item">
+                                    <div class="task-icon green">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div class="task-content">
+                                        <p><strong>Audit Pajak - PT Prima Karya</strong></p>
+                                        <span>10 Mei 2025</span>
+                                    </div>
+                                    <span class="task-badge green">Terjadwal</span>
+                                </div>
+                                <div class="task-item">
+                                    <div class="task-icon purple">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="task-content">
+                                        <p><strong>Konsultasi - UD Sinar Mandiri</strong></p>
+                                        <span>12 Mei 2025</span>
+                                    </div>
+                                    <span class="task-badge green">Terjadwal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kalender -->
+                        <div class="calendar-card">
+                            <div class="card-header">
+                                <h3>Kalender</h3>
+                            </div>
+                            <div class="calendar">
+                                <div class="calendar-header">
+                                    <span class="cal-month">April 2025</span>
+                                    <div class="cal-nav">
+                                        <button><i class="fas fa-chevron-left"></i></button>
+                                        <button><i class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid">
+                                    <div class="cal-day-name">Sen</div>
+                                    <div class="cal-day-name">Sel</div>
+                                    <div class="cal-day-name">Rab</div>
+                                    <div class="cal-day-name">Kam</div>
+                                    <div class="cal-day-name">Jum</div>
+                                    <div class="cal-day-name">Sab</div>
+                                    <div class="cal-day-name">Min</div>
+                                    <!-- April 2025 starts on Tuesday -->
+                                    <div class="cal-day empty"></div>
+                                    <div class="cal-day">1</div>
+                                    <div class="cal-day">2</div>
+                                    <div class="cal-day">3</div>
+                                    <div class="cal-day">4</div>
+                                    <div class="cal-day">5</div>
+                                    <div class="cal-day">6</div>
+                                    <div class="cal-day">7</div>
+                                    <div class="cal-day">8</div>
+                                    <div class="cal-day">9</div>
+                                    <div class="cal-day">10</div>
+                                    <div class="cal-day">11</div>
+                                    <div class="cal-day">12</div>
+                                    <div class="cal-day">13</div>
+                                    <div class="cal-day">14</div>
+                                    <div class="cal-day">15</div>
+                                    <div class="cal-day">16</div>
+                                    <div class="cal-day">17</div>
+                                    <div class="cal-day">18</div>
+                                    <div class="cal-day">19</div>
+                                    <div class="cal-day">20</div>
+                                    <div class="cal-day">21</div>
+                                    <div class="cal-day">22</div>
+                                    <div class="cal-day">23</div>
+                                    <div class="cal-day">24</div>
+                                    <div class="cal-day">25</div>
+                                    <div class="cal-day">26</div>
+                                    <div class="cal-day">27</div>
+                                    <div class="cal-day">28</div>
+                                    <div class="cal-day today">29</div>
+                                    <div class="cal-day">30</div>
+                                    <div class="cal-day empty"></div>
+                                    <div class="cal-day empty"></div>
+                                    <div class="cal-day empty"></div>
+                                    <div class="cal-day empty"></div>
+                                    <div class="cal-day">1</div>
+                                    <div class="cal-day">2</div>
+                                    <div class="cal-day">3</div>
+                                    <div class="cal-day">4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

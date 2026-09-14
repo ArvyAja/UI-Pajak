@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - SPT & Pelaporan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+
+        /* Split Layout */
+        .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .section-panel { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-main); }
+        .section-header-left { display: flex; align-items: center; gap: 12px; }
+        .section-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .section-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .section-icon.green { background: var(--success-bg); color: var(--success); }
+        .section-icon.amber { background: var(--warning-bg); color: var(--amber); }
+        .section-icon.red { background: var(--danger-bg); color: var(--red); }
+        .section-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .section-subtitle { font-size: 11px; color: var(--text-muted); }
+        .section-body { padding: 20px; }
+
+        /* Mini Stats */
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .mini-stat { text-align: center; padding: 12px; background: var(--bg-main); border-radius: var(--radius); }
+        .mini-stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .mini-stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px; }
+        .mini-stat-value.green { color: var(--success); }
+        .mini-stat-value.amber { color: var(--amber); }
+        .mini-stat-value.red { color: var(--danger); }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+        .data-table td { padding: 12px; font-size: 12px; border-bottom: 1px solid var(--border); }
+        .data-table tbody tr:hover { background: #F8FAFC; }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        .spt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .spt-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+        .spt-badge.lapor { background: var(--success-bg); color: var(--success); }
+        .spt-badge.lapor::before { background: var(--success); }
+        .spt-badge.pending { background: var(--warning-bg); color: #D97706; }
+        .spt-badge.pending::before { background: var(--amber); }
+        .spt-badge.overdue { background: var(--danger-bg); color: var(--danger); }
+        .spt-badge.overdue::before { background: var(--danger); }
+
+        .action-btn-sm { width: 28px; height: 28px; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.2s; }
+        .action-btn-sm.view { background: #EFF6FF; color: var(--blue); }
+        .action-btn-sm.view:hover { background: #DBEAFE; }
+        .action-btn-sm.process { background: var(--success-bg); color: var(--success); }
+        .action-btn-sm.process:hover { background: #D1FAE5; }
+
+        /* Chart */
+        .chart-container { height: 180px; position: relative; }
+
+        /* Deadline Mini */
+        .deadline-mini { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-main); border-radius: var(--radius); margin-bottom: 8px; }
+        .deadline-mini:last-child { margin-bottom: 0; }
+        .deadline-mini-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .deadline-mini-icon.urgent { background: var(--danger-bg); color: var(--danger); }
+        .deadline-mini-icon.warning { background: var(--warning-bg); color: var(--amber); }
+        .deadline-mini-icon.safe { background: var(--success-bg); color: var(--success); }
+        .deadline-mini-content { flex: 1; min-width: 0; }
+        .deadline-mini-title { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .deadline-mini-desc { font-size: 10px; color: var(--text-muted); }
+        .deadline-mini-badge { font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
+        .deadline-mini-badge.urgent { background: var(--danger-bg); color: var(--danger); }
+        .deadline-mini-badge.warning { background: var(--warning-bg); color: #D97706; }
+        .deadline-mini-badge.safe { background: var(--success-bg); color: var(--success); }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: var(--radius-lg); width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; border: none; background: var(--bg-main); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input, .form-select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-light); }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); }
+
+        @media (max-width: 1200px) { .split-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .mini-stats { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Klien</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="klien-pribadi.html" class="nav-item submenu"><i class="fas fa-user"></i><span>Klien Pribadi</span></a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu"><i class="fas fa-building"></i><span>Klien Perusahaan</span></a>
+                </div>
+                <a href="spt.html" class="nav-item active"><i class="fas fa-file-invoice"></i><span>SPT & Pelaporan</span></a>
+                <a href="konsultasi.html" class="nav-item"><i class="fas fa-comments"></i><span>Konsultasi</span></a>
+                <a href="dokumen.html" class="nav-item"><i class="fas fa-folder-open"></i><span>Dokumen</span></a>
+                <a href="ai-assistant.html" class="nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="kalkulator.html" class="nav-item"><i class="fas fa-calculator"></i><span>Kalkulator Pajak</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Keuangan</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="pendapatan.html" class="nav-item submenu"><i class="fas fa-arrow-trend-up"></i><span>Pendapatan</span></a>
+
+                    <a href="laba-rugi.html" class="nav-item submenu"><i class="fas fa-scale-balanced"></i><span>Laba/Rugi</span></a>
+                     <a href="piutang.html" class="nav-item submenu"><i class="fas fa-hand-holding-dollar"></i><span>Piutang</span></a>
+                     <a href="laporan-keuangan.html" class="nav-item submenu"><i class="fas fa-chart-pie"></i><span>Laporan Keuangan</span></a>
+                </div>
+                 <a href="kalender.html" class="nav-item"><i class="fas fa-calendar-days"></i><span>Kalender</span></a>
+                 <a href="laporan.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+                <a href="peraturan.html" class="nav-item"><i class="fas fa-gavel"></i><span>Peraturan Pajak</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-gear"></i><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration"><div class="illustration-icon"><i class="fas fa-file-invoice-dollar"></i><i class="fas fa-shield-halved"></i></div></div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Cari klien, NPWP, atau dokumen..."></div>
+                <div class="header-right">
+                    <div class="notification-bell"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Admin Konsultan Pajak</span></div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-file-invoice" style="color: var(--primary-light); margin-right: 8px;"></i> SPT & Pelaporan</h1>
+                        <p>Kelola pelaporan SPT Masa dan SPT Tahunan untuk klien pribadi dan perusahaan</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Buat SPT Baru</button>
+                    </div>
+                </div>
+
+                <!-- Split Layout: Pribadi vs Perusahaan -->
+                <div class="split-layout">
+                    <!-- LEFT: SPT Klien Pribadi -->
+                    <div class="section-panel">
+                        <div class="section-header">
+                            <div class="section-header-left">
+                                <div class="section-icon blue"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <div class="section-title">SPT Klien Pribadi</div>
+                                    <div class="section-subtitle">Orang Pribadi (OP) & PKP Pribadi</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 11px;"><i class="fas fa-plus"></i> Tambah</button>
+                        </div>
+                        <div class="section-body">
+                            <!-- Mini Stats -->
+                            <div class="mini-stats">
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value">24</div>
+                                    <div class="mini-stat-label">Total SPT</div>
+                                </div>
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value green">20</div>
+                                    <div class="mini-stat-label">Lapor</div>
+                                </div>
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value red">4</div>
+                                    <div class="mini-stat-label">Belum</div>
+                                </div>
+                            </div>
+
+                            <!-- Chart Mini -->
+                            <div style="margin-bottom: 16px;">
+                                <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">KOMPOSISI SPT PRIBADI</div>
+                                <div class="chart-container"><canvas id="sptPribadiChart"></canvas></div>
+                            </div>
+
+                            <!-- Table -->
+                            <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">DAFTAR SPT</div>
+                            <div style="overflow-x: auto;">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr><th>Nama</th><th>Jenis SPT</th><th>Status</th><th>Aksi</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight: 500;">Budi Santoso</td>
+                                            <td>1770 SPT</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">Siti Rahayu</td>
+                                            <td>1770 SPT</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">Ahmad Hidayat</td>
+                                            <td>1770 SPT</td>
+                                            <td><span class="spt-badge pending">Proses</span></td>
+                                            <td><button class="action-btn-sm process"><i class="fas fa-play"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">Dewi Lestari</td>
+                                            <td>1770 SPT</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">Rudi Hermawan</td>
+                                            <td>1770 SPT</td>
+                                            <td><span class="spt-badge overdue">Terlambat</span></td>
+                                            <td><button class="action-btn-sm process"><i class="fas fa-play"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Deadline Mini -->
+                            <div style="margin-top: 16px;">
+                                <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">DEADLINE MENDATANG</div>
+                                <div class="deadline-mini">
+                                    <div class="deadline-mini-icon urgent"><i class="fas fa-exclamation"></i></div>
+                                    <div class="deadline-mini-content">
+                                        <div class="deadline-mini-title">SPT Tahunan 1770</div>
+                                        <div class="deadline-mini-desc">30 Apr 2025</div>
+                                    </div>
+                                    <span class="deadline-mini-badge urgent">2 Hari</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: SPT Klien Perusahaan -->
+                    <div class="section-panel">
+                        <div class="section-header">
+                            <div class="section-header-left">
+                                <div class="section-icon green"><i class="fas fa-building"></i></div>
+                                <div>
+                                    <div class="section-title">SPT Klien Perusahaan</div>
+                                    <div class="section-subtitle">PT, CV, UD, Yayasan & Badan Usaha</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 11px;"><i class="fas fa-plus"></i> Tambah</button>
+                        </div>
+                        <div class="section-body">
+                            <!-- Mini Stats -->
+                            <div class="mini-stats">
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value">132</div>
+                                    <div class="mini-stat-label">Total SPT</div>
+                                </div>
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value green">122</div>
+                                    <div class="mini-stat-label">Lapor</div>
+                                </div>
+                                <div class="mini-stat">
+                                    <div class="mini-stat-value red">10</div>
+                                    <div class="mini-stat-label">Belum</div>
+                                </div>
+                            </div>
+
+                            <!-- Chart Mini -->
+                            <div style="margin-bottom: 16px;">
+                                <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">KOMPOSISI SPT PERUSAHAAN</div>
+                                <div class="chart-container"><canvas id="sptPerusahaanChart"></canvas></div>
+                            </div>
+
+                            <!-- Table -->
+                            <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">DAFTAR SPT</div>
+                            <div style="overflow-x: auto;">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr><th>Perusahaan</th><th>Jenis SPT</th><th>Status</th><th>Aksi</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight: 500;">PT Maju Jaya</td>
+                                            <td>PPN 1111</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">PT Global Solusi</td>
+                                            <td>PPh 21</td>
+                                            <td><span class="spt-badge pending">Proses</span></td>
+                                            <td><button class="action-btn-sm process"><i class="fas fa-play"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">CV Sejahtera Abadi</td>
+                                            <td>PPh 23</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">PT Prima Karya</td>
+                                            <td>PPh 25</td>
+                                            <td><span class="spt-badge overdue">Terlambat</span></td>
+                                            <td><button class="action-btn-sm process"><i class="fas fa-play"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: 500;">UD Sinar Mandiri</td>
+                                            <td>PPN 1111</td>
+                                            <td><span class="spt-badge lapor">Lapor</span></td>
+                                            <td><button class="action-btn-sm view"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Deadline Mini -->
+                            <div style="margin-top: 16px;">
+                                <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">DEADLINE MENDATANG</div>
+                                <div class="deadline-mini">
+                                    <div class="deadline-mini-icon urgent"><i class="fas fa-exclamation"></i></div>
+                                    <div class="deadline-mini-content">
+                                        <div class="deadline-mini-title">SPT Masa PPN 1111</div>
+                                        <div class="deadline-mini-desc">20 Mei 2025 • 18 Perusahaan</div>
+                                    </div>
+                                    <span class="deadline-mini-badge urgent">Mendesak</span>
+                                </div>
+                                <div class="deadline-mini">
+                                    <div class="deadline-mini-icon warning"><i class="fas fa-clock"></i></div>
+                                    <div class="deadline-mini-content">
+                                        <div class="deadline-mini-title">SPT Masa PPh 21</div>
+                                        <div class="deadline-mini-desc">20 Mei 2025 • 24 Perusahaan</div>
+                                    </div>
+                                    <span class="deadline-mini-badge warning">7 Hari</span>
+                                </div>
+                                <div class="deadline-mini">
+                                    <div class="deadline-mini-icon safe"><i class="fas fa-check"></i></div>
+                                    <div class="deadline-mini-content">
+                                        <div class="deadline-mini-title">Setoran PPh 25</div>
+                                        <div class="deadline-mini-desc">15 Apr 2025</div>
+                                    </div>
+                                    <span class="deadline-mini-badge safe">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Buat SPT -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Buat SPT Baru</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Jenis Klien</label>
+                    <select class="form-select">
+                        <option value="">Pilih jenis klien</option>
+                        <option>Pribadi (OP)</option>
+                        <option>Perusahaan (PT/CV/UD)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Klien</label>
+                    <select class="form-select">
+                        <option value="">Pilih klien</option>
+                        <option>PT Maju Jaya</option>
+                        <option>PT Global Solusi</option>
+                        <option>CV Sejahtera Abadi</option>
+                        <option>Budi Santoso</option>
+                        <option>Siti Rahayu</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jenis SPT</label>
+                    <select class="form-select">
+                        <option value="">Pilih jenis SPT</option>
+                        <option>SPT Masa PPN 1111</option>
+                        <option>SPT Masa PPh 21</option>
+                        <option>SPT Masa PPh 23</option>
+                        <option>SPT Masa PPh 25/29</option>
+                        <option>SPT Tahunan 1771</option>
+                        <option>SPT Tahunan 1770</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Masa Pajak</label>
+                    <input type="month" class="form-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal()">Buat SPT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay')?.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Chart SPT Pribadi
+        new Chart(document.getElementById('sptPribadiChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sudah Lapor', 'Dalam Proses', 'Terlambat'],
+                datasets: [{ data: [20, 2, 2], backgroundColor: ['#10B981', '#F59E0B', '#EF4444'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 8, font: { size: 10 } } } } }
+        });
+
+        // Chart SPT Perusahaan
+        new Chart(document.getElementById('sptPerusahaanChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['PPN 1111', 'PPh 21', 'PPh 23', 'PPh 25'],
+                datasets: [{ data: [45, 35, 15, 5], backgroundColor: ['#3B82F6', '#6366F1', '#8B5CF6', '#F59E0B'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 8, font: { size: 10 } } } } }
+        });
+    </script>
+</body>
+</html>

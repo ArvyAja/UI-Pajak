@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Pasal & Undang-Undang Pajak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .update-banner { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); border: 1px solid #BFDBFE; border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+        .update-banner-left { display: flex; align-items: center; gap: 12px; }
+        .update-banner-icon { width: 40px; height: 40px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+        .update-banner-text h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .update-banner-text p { font-size: 12px; color: var(--text-secondary); }
+        .main-grid { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+        .sidebar-filter { display: flex; flex-direction: column; gap: 8px; }
+        .filter-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; }
+        .filter-header { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .filter-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; }
+        .filter-body { padding: 8px; }
+        .filter-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
+        .filter-item:hover { background: var(--bg-main); }
+        .filter-item.active { background: #EFF6FF; color: var(--primary-light); }
+        .filter-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .filter-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .filter-icon.green { background: var(--success-bg); color: var(--success); }
+        .filter-icon.purple { background: var(--info-bg); color: var(--purple); }
+        .filter-icon.amber { background: var(--warning-bg); color: var(--amber); }
+        .filter-icon.red { background: var(--danger-bg); color: var(--red); }
+        .filter-icon.gray { background: var(--bg-main); color: var(--text-muted); }
+        .filter-text { font-size: 13px; font-weight: 500; }
+        .filter-count { margin-left: auto; font-size: 11px; color: var(--text-muted); background: var(--bg-main); padding: 2px 8px; border-radius: 10px; }
+        .filter-item.active .filter-count { background: rgba(59,130,246,0.15); color: var(--primary-light); }
+        .content-area { display: flex; flex-direction: column; gap: 16px; }
+        .search-bar { display: flex; gap: 12px; margin-bottom: 8px; }
+        .search-input { position: relative; flex: 1; }
+        .search-input i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .search-input input { width: 100%; padding: 10px 16px 10px 40px; background: white; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .search-input input:focus { outline: none; border-color: var(--primary-light); }
+        .filter-select { padding: 10px 16px; background: white; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; color: var(--text-primary); cursor: pointer; min-width: 140px; }
+        .regulation-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s; }
+        .regulation-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .reg-header { padding: 20px 24px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .reg-header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .reg-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .reg-short { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .reg-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+        .reg-meta { display: flex; gap: 16px; margin-top: 12px; }
+        .reg-meta-item { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+        .reg-meta-item i { font-size: 10px; }
+        .reg-articles { padding: 0 24px 20px; display: none; }
+        .reg-articles.show { display: block; }
+        .article-item { border: 1px solid var(--border); border-radius: var(--radius); margin-top: 12px; overflow: hidden; }
+        .article-header { padding: 14px 16px; background: var(--bg-main); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        .article-header:hover { background: #E2E8F0; }
+        .article-pasal { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .article-title-text { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .article-toggle { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+        .article-toggle.open { transform: rotate(180deg); }
+        .article-content { padding: 16px; display: none; border-top: 1px solid var(--border); }
+        .article-content.show { display: block; }
+        .article-main { font-size: 13px; color: var(--text-primary); line-height: 1.6; margin-bottom: 12px; padding: 12px; background: #F8FAFC; border-radius: var(--radius); border-left: 3px solid var(--primary-light); }
+        .substance-list { display: flex; flex-direction: column; gap: 8px; }
+        .substance-item { display: flex; gap: 8px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+        .substance-item::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary-light); flex-shrink: 0; margin-top: 6px; }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: var(--text-muted); margin-bottom: 16px; }
+        .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .empty-state p { font-size: 13px; color: var(--text-secondary); }
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .reg-meta { flex-wrap: wrap; gap: 8px; } .search-bar { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Klien</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="klien-pribadi.html" class="nav-item submenu">
+                        <i class="fas fa-user"></i>
+                        <span>Klien Pribadi</span>
+                    </a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu">
+                        <i class="fas fa-building"></i>
+                        <span>Klien Perusahaan</span>
+                    </a>
+                </div>
+                <a href="spt.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>SPT & Pelaporan</span>
+                </a>
+                <a href="konsultasi.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Konsultasi</span>
+                </a>
+                <a href="dokumen.html" class="nav-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Dokumen</span>
+                </a>
+                <a href="ai-assistant.html" class="nav-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="kalkulator.html" class="nav-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>Kalkulator Pajak</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Keuangan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="pendapatan.html" class="nav-item submenu">
+                        <i class="fas fa-arrow-trend-up"></i>
+                        <span>Pendapatan</span>
+                    </a>
+                    <a href="laba-rugi.html" class="nav-item submenu">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Laba/Rugi</span>
+                    </a>
+                    <a href="piutang.html" class="nav-item submenu">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                        <span>Piutang</span>
+                    </a>
+                    <a href="laporan-keuangan.html" class="nav-item submenu">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Laporan Keuangan</span>
+                    </a>
+                </div>
+                <a href="kalender.html" class="nav-item">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Kalender</span>
+                </a>
+                <a href="laporan.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="peraturan.html" class="nav-item active">
+                    <i class="fas fa-gavel"></i>
+                    <span>Peraturan Pajak</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration">
+                    <div class="illustration-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari pasal, undang-undang, atau peraturan pajak...">
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <span class="user-name">Admin</span>
+                            <span class="user-role">Admin Konsultan Pajak</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-gavel" style="color: var(--primary-light); margin-right: 8px;"></i> Pasal & Undang-Undang Pajak</h1>
+                        <p>Referensi lengkap peraturan perpajakan Indonesia beserta pasal-pasalnya</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="checkForUpdates()"><i class="fas fa-sync-alt"></i> Cek Update</button>
+                        <button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+
+                <div class="update-banner" id="updateBanner" style="display: none;">
+                    <div class="update-banner-left">
+                        <div class="update-banner-icon"><i class="fas fa-arrow-up"></i></div>
+                        <div class="update-banner-text">
+                            <h4>Update Tersedia!</h4>
+                            <p id="updateMessage">Peraturan perpajakan telah diperbarui. Klik untuk melihat perubahan terbaru.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="applyUpdate()">Terapkan Update</button>
+                </div>
+
+                <div class="main-grid">
+                    <!-- Sidebar Filter -->
+                    <div class="sidebar-filter">
+                        <div class="filter-card">
+                            <div class="filter-header">
+                                <h3>Kategori Peraturan</h3>
+                            </div>
+                            <div class="filter-body" id="categoryFilter">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+
+                        <div class="filter-card">
+                            <div class="filter-header">
+                                <h3>Update Terakhir</h3>
+                            </div>
+                            <div class="filter-body" style="padding: 16px;">
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Data diperbarui:</div>
+                                <div id="lastUpdated" style="font-size: 13px; font-weight: 600; color: var(--text-primary);">-</div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Versi: <span id="dataVersion">-</span></div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Total: <span id="totalRegs">-</span> peraturan</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="content-area">
+                        <div class="search-bar">
+                            <div class="search-input">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Cari pasal, judul UU, atau kata kunci..." id="searchInput" oninput="searchRegulations()">
+                            </div>
+                            <select class="filter-select" id="categorySelect" onchange="filterByCategorySelect()">
+                                <option value="">Semua Kategori</option>
+                            </select>
+                        </div>
+
+                        <div id="regulationList">
+                            <!-- Filled by JS -->
+                        </div>
+
+                        <div class="empty-state" id="emptyState" style="display: none;">
+                            <i class="fas fa-search"></i>
+                            <h3>Tidak Ditemukan</h3>
+                            <p>Tidak ada peraturan yang cocok dengan pencarian Anda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        let data = {
+  "lastUpdated": "2025-04-14",
+  "version": "1.0.0",
+  "categories": [
+    {"id": "kup", "name": "Ketentuan Umum Perpajakan", "icon": "fa-landmark", "color": "blue"},
+    {"id": "pph", "name": "Pajak Penghasilan (PPh)", "icon": "fa-money-bill-wave", "color": "green"},
+    {"id": "ppn", "name": "Pajak Pertambahan Nilai (PPN)", "icon": "fa-receipt", "color": "purple"},
+    {"id": "pbb", "name": "Pajak Bumi & Bangunan (PBB)", "icon": "fa-house-chimney", "color": "amber"},
+    {"id": "kup-prosedur", "name": "Tata Cara Perpajakan", "icon": "fa-gavel", "color": "red"},
+    {"id": "lainnya", "name": "Peraturan Lainnya", "icon": "fa-file-lines", "color": "gray"}
+  ],
+  "regulations": [
+    {
+      "id": 1, "category": "kup", "title": "Undang-Undang Nomor 6 Tahun 1983", "shortName": "UU KUP",
+      "description": "Ketentuan Umum dan Tata Cara Perpajakan sebagaimana telah beberapa kali terakhir diubah dengan UU HPP.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "Pasal 1", "title": "Definisi Istilah Perpajakan", "content": "Yang dimaksud dengan 'Pajak' adalah kontribusi wajib kepada negara yang terutang oleh orang pribadi atau badan yang bersifat memaksa berdasarkan undang-undang, dengan tidak mendapat imbalan secara langsung dan digunakan untuk keperluan negara bagi sebesar-besarnya kemakmuran rakyat.", "substance": ["Wajib Pajak adalah orang pribadi atau badan yang menurut ketentuan dalam undang-undang ini dikenakan pajak, termasuk pemungut pajak, pemotong pajak, dan penyuluh pajak.", "Objek Pajak adalah penghasilan, benda, kegiatan atau keadaan termasuk peristiwa yang dikenakan pajak berdasarkan undang-undang.", "Subjek Pajak adalah orang pribadi atau badan yang menurut ketentuan dalam undang-undang ini dikenakan pajak.", "NPWP (Nomor Pokok Wajib Pajak) adalah nomor yang diberikan kepada Wajib Pajak sebagai identitas dalam melaksanakan hak dan kewajiban perpajakannya."]},
+        {"pasal": "Pasal 2", "title": "Jenis-Jenis Pajak", "content": "Pajak yang dikenakan oleh Pemerintah Pusat terdiri atas Pajak Penghasilan dan Pajak Pertambahan Nilai.", "substance": ["Pajak Penghasilan (PPh) adalah pajak yang dikenakan kepada orang pribadi atau badan atas penghasilan yang diterima atau diperoleh dalam tahun pajak.", "Pajak Pertambahan Nilai (PPN) adalah pajak yang dikenakan atas barang dan jasa yang diperjualbelikan.", "Pajak Bumi dan Bangunan (PBB) adalah pajak yang dikenakan atas bumi dan bangunan.", "Bea Meterai adalah pungutan atas dokumen tertentu dalam rangka penerimaan negara."]},
+        {"pasal": "Pasal 3", "title": "Objek Pajak Penghasilan", "content": "Yang merupakan objek pajak adalah penghasilan, yaitu setiap tambahan kemampuan ekonomis yang diterima atau diperoleh Wajib Pajak, yang berasal dari Indonesia maupun dari luar Indonesia, yang dapat dipakai untuk konsumsi atau untuk menambah kekayaan Wajib Pajak yang bersangkutan, dengan nama dan dalam bentuk apa pun.", "substance": ["Gaji, upah, tunjangan, honorarium, dan pembayaran lain yang diterima karena pekerjaan.", "Keuntungan usaha, termasuk keuntungan dari penjualan harta.", "Royalti, bunga, dividen, hadiah, dan penghasilan lainnya.", "Penghasilan dari pengalihan harta yang diperoleh secara cuma-cuma atau dengan harga yang lebih rendah dari nilai pasarnya."]},
+        {"pasal": "Pasal 4", "title": "Penghasilan Kena Pajak", "content": "Penghasilan Kena Pajak adalah penghasilan kotor (bruto) dikurangi penghasilan yang tidak kena pajak.", "substance": ["Penghasilan kotor adalah jumlah seluruh penghasilan, baik yang diterima di Indonesia maupun di luar Indonesia.", "Penghasilan tidak kena pajak (PTKP) diberikan kepada WP orang pribadi.", "PTKP untuk WP tidak kawin: Rp 54.000.000/tahun.", "PTKP untuk WP kawin: Rp 58.500.000/tahun, ditambah Rp 4.500.000 untuk setiap tanggungan (maksimal 3 orang)."]},
+        {"pasal": "Pasal 5", "title": "Taru PPh", "content": "Tarif Pajak Penghasilan ditetapkan dengan undang-undang.", "substance": ["Tarif PPh Badan: 22% dari penghasilan kena pajak.", "Tarif PPh Orang Pribadi: 0% s/d 35% (progresif).", "Tarif PPh Final UMKM: 0,5% dari omset bruto.", "Tarif PPh 23: 2% dari bruto pembayaran.", "Tarif PPh 26: 20% dari bruto untuk orang asing."]},
+        {"pasal": "Pasal 8", "title": "Kewajiban Pemotongan Pajak", "content": "Pemotongan pajak dilakukan oleh pemberi kerja, bendaharawan negara, atau pihak lain yang ditunjuk oleh Menteri Keuangan.", "substance": ["Pemberi kerja wajib memotong PPh 21 atas gaji karyawan.", "Pembeli barang/jasa wajib memotong PPh 23 atas jasa yang diterima.", "Instansi pemerintah wajib memotong PPh 22 atas pembelian barang.", "Pemotongan harus dilakukan tepat waktu sesuai jadwal yang ditentukan."]},
+        {"pasal": "Pasal 18", "title": "Surat Pemberitahuan", "content": "Setiap WP wajib menyampaikan Surat Pemberitahuan (SPT) pajak yang dikenakan kepadanya.", "substance": ["SPT Tahunan PPh OP disampaikan paling lambat 31 Maret tahun berikutnya.", "SPT Tahunan PPh Badan disampaikan paling lambat 4 bulan setelah tahun pajak berakhir.", "SPT Masa disampaikan paling lambat tanggal 20 bulan berikutnya.", "SPT harus disampaikan secara elektronik melalui e-Filing."]}
+      ]
+    },
+    {
+      "id": 2, "category": "pph", "title": "Undang-Undang Nomor 7 Tahun 2021", "shortName": "UU HPP",
+      "description": "Harmonisasi Peraturan Perpajakan (UU HPP) menggantikan sebagian pasal dalam UU KUP dan UU PPh.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "Pasal 4", "title": "Jenis-Jenis Pajak", "content": "Yang dimaksud dengan pajak adalah Pajak Penghasilan, Pajak Pertambahan Nilai, Bea Keluar, Cukai, dan Pajak Daerah.", "substance": ["PPh 21: Pajak atas penghasilan berupa gaji, upah, honorarium, tunjangan, dan pembayaran lain yang diterima karena pekerjaan.", "PPh 22: Pajak pemotongan atas pembelian barang tertentu oleh instansi pemerintah.", "PPh 23: Pajak atas penghasilan berupa dividen, bunga, royalti, sewa, dan penghasilan lainnya.", "PPh 24: Pajak atas penghasilan dari luar negeri.", "PPh 25: Angsuran PPh terutang yang dibayar setiap bulan.", "PPh 26: Pajak atas penghasilan orang asing yang melakukan kegiatan di Indonesia.", "PPh 29: PPh terutang yang belum tertutup oleh PPh yang dipotong/dipungut."]},
+        {"pasal": "Pasal 17", "title": "Tarif PPh Badan", "content": "Tarif Pajak Penghasilan atas penghasilan badan adalah sebesar 22% (dua puluh dua persen).", "substance": ["Tarif umum PPh Badan: 22%.", "Untuk badan dengan peredaran bruto tertentu (modal <= Rp 50 miliar) dikenakan tarif 11% di atas Rp 500 juta.", "Penghasilan kena pajak sampai dengan Rp 500 juta dikenakan tarif 0%.", "Tarif PPh Final untuk UMKM: 0,5% dari omset bruto (sampai dengan omset Rp 4,8 miliar).", "Dividen yang dibagikan kepada WP badan dalam negeri tidak dikenakan PPh."]},
+        {"pasal": "Pasal 21", "title": "Pemotongan PPh Pasal 21", "content": "PPh Pasal 21 dipotong oleh pemberi kerja atas penghasilan berupa gaji, upah, honorarium, tunjangan, dan pembayaran lain yang diterima karena hubungan kerja.", "substance": ["Tarif progresif: 0% (sampai PTKP), 5%, 10%, 15%, 25%, 30%.", "PTKP 2024: Tidak Kawin Rp 60 juta, Kawin Rp 64,5 juta, ditambah Rp 4,5 juta/tanggungan.", "Pemotongan dilakukan setiap bulan oleh pemberi kerja.", "Wajib menyampaikan SPT Masa PPh 21.", "Bisa menggunakan metode anual atau bulanan."]},
+        {"pasal": "Pasal 23", "title": "Pemotongan PPh Pasal 23", "content": "PPh Pasal 23 dipotong atas pembayaran untuk penyerahan jasa, penggunaan hak, atau penghasilan lainnya.", "substance": ["Tarif pemotongan: 2% dari jumlah bruto.", "Termasuk: deviden, bunga, royalti, sewa, hadiah dan penghargaan.", "Wajib menyampaikan SPT Masa PPh 23.", "Pemotong adalah pihak yang melakukan pembayaran."]},
+        {"pasal": "Pasal 24", "title": "PPh Pasal 24 - Pajak Penghasilan Luar Negeri", "content": "PPh yang dibayar di luar negeri dapat dikreditkan terhadap PPh terutang di Indonesia.", "substance": ["Kredit pajak luar negeri dilakukan oleh WP Orang Pribadi dan WP Badan.", "Batas kredit pajak luar negeri: PPh terutang di Indonesia.", "Dokumen bukti pembayaran pajak luar negeri harus dilampirkan.", "Kelebihan kredit tidak dapat dikembalikan."]},
+        {"pasal": "Pasal 26", "title": "PPh Pasal 26", "content": "PPh Pasal 26 dipotong atas penghasilan yang diterima oleh orang asing yang tidak berkedudukan di Indonesia.", "substance": ["Tarif PPh 26: 20% dari jumlah bruto.", "Berlaku untuk dividen, bunga, royalti, hadiah, penghargaan, dan jasa.", "Dapat dikurangi perjanjian penghindaran pajak ganda (P3D).", "Pemotong adalah pihak Indonesia yang melakukan pembayaran."]},
+        {"pasal": "Pasal 28", "title": "PPh Pasal 28 Ayat (1)", "content": "PPh Pasal 28 Ayat (1) dipotong atas penghasilan tertentu yang diterima oleh WP.", "substance": ["Tarif: 0,5% dari jumlah bruto.", "Berlaku untuk penghasilan dari pengalihan harta.", "Termasuk penghasilan dari pengalihan saham.", "Tidak termasuk pengalihan harta yang dikenakan PPh final."]},
+        {"pasal": "Pasal 29", "title": "PPh Pasal 29", "content": "PPh terutang yang belum tertutup oleh PPh yang dipotong atau dipungut.", "substance": ["PPh Pasal 29 dibayar oleh WP dalam SPT Tahunan.", "Apabila PPh terutang lebih besar dari PPh yang dipotong.", "Dapat diangsur dengan surat ketetapan pajak.", "Sisa lebih PPh dapat dikreditkan ke tahun berikutnya."]}
+      ]
+    },
+    {
+      "id": 3, "category": "ppn", "title": "Undang-Undang Nomor 8 Tahun 1983", "shortName": "UU PPN",
+      "description": "Pajak Pertambahan Nilai atas Barang dan Jasa dan Pajak Penjualan atas Barang Mewah.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "Pasal 1", "title": "Definisi PPN", "content": "Pajak Pertambahan Nilai adalah pajak yang dikenakan atas barang dan jasa yang diperjualbelikan.", "substance": ["PPN adalah pungutan atas pertambahan nilai yang terjadi pada setiap mata rantai peredaran barang dan jasa.", "Barang Kena Pajak (BKP) adalah benda berwujud yang bergerak atau tidak bergerak.", "Jasa Kena Pajak (JKP) adalah jasa yang dilakukan oleh orang pribadi atau badan.", "Pengusaha Kena Pajak (PKP) adalah pengusaha yang melakukan penyerahan BKP dan/atau JKP."]},
+        {"pasal": "Pasal 4", "title": "Tarif PPN", "content": "Tarif PPN adalah 11% (sebelas persen) dari Dasar Pengenaan Pajak.", "substance": ["Tarif PPN: 11% berlaku sejak 1 April 2022.", "Tarif PPN Ditanggung Pemerintah (DTP): 50% (berlaku sementara).", "Dasar Pengenaan Pajak (DPP) adalah harga jual, penggantian, atau nilai transaksi.", "PPN yang terutang = Tarif x DPP.", "DPP PPN ditambah PPh Pasal 23 (untuk jasa tertentu)."]},
+        {"pasal": "Pasal 7", "title": "Pembebasan PPN", "content": "Barang dan jasa tertentu dibebaskan dari pengenaan PPN.", "substance": ["Barang dan jasa yang dibebaskan PPN antara lain: makanan/minuman olahan.", "Jasa kesehatan, jasa pendidikan, jasa keuangan, jasa asuransi dibebaskan PPN.", "Barang yang diekspor dibebaskan PPN.", "Barang impor untuk keperluan tertentu dapat dibebaskan PPN."]},
+        {"pasal": "Pasal 9", "title": "Pajak Masukan dan Pajak Keluaran", "content": "PKP dapat memungut PPN atas penyerahan BKP/JKP (Pajak Keluaran) dan membayar PPN atas pembelian BKP/JKP (Pajak Masukan).", "substance": ["Pajak Keluaran (PK) adalah PPN yang dipungut oleh PKP atas penyerahan BKP/JKP.", "Pajak Masukan (PM) adalah PPN yang dibayar oleh PKP atas pembelian BKP/JKP.", "PPh Pasal 23 dapat menjadi Pajak Masukan.", "Pajak Masukan tidak dapat dikreditkan untuk pengadaan barang/jasa tertentu.", "Sisa Lebih Pajak Masukan (SLHPM) dapat diklaim untuk restitusi."]},
+        {"pasal": "Pasal 13", "title": "Faktur Pajak", "content": "PKP wajib menerbitkan Faktur Pajak atas penyerahan BKP/JKP.", "substance": ["Faktur Pajak wajib diterbitkan untuk setiap penyerahan BKP/JKP.", "Faktur Pajak harus memuat: NPWP penjual, nama, alamat, tanggal, Nomor Seri Faktur Pajak.", "Faktur Pajak dapat berupa Dokumen Faktur Elektronik (e-Faktur).", "Faktur Pajak harus diterbitkan paling lambat tanggal 15 bulan berikutnya.", "Sanksi: Denda 50% dari PPh terutang atau minimal Rp 500.000."]},
+        {"pasal": "Pasal 14", "title": "Pemungutan PPN", "content": "PPN dipungut oleh PKP atas penyerahan BKP/JKP.", "substance": ["Pemungutan PPN dilakukan oleh PKP yang menyerahkan BKP/JKP.", "Pemungutan harus tercatat dalam faktur pajak.", "PPN dipungut sebesar 11% dari DPP.", "PPN yang dipungut harus disetor ke kas negara."]},
+        {"pasal": "Pasal 16", "title": "Penyerahan BKP dan JKP", "content": "Penyerahan BKP/JKP adalah pengalihan hak milik atas barang atau penyerahan jasa.", "substance": ["Penyerahan BKP/JKP terjadi saat hak milik berpindah.", "Penyerahan BKP/JKP dikenakan PPN.", "Penyerahan BKP/JKP oleh PKP harus dilaporkan.", "Penyerahan BKP/JKP harus memenuhi syarat tertentu."]},
+        {"pasal": "Pasal 19", "title": "Pengkreditan Pajak Masukan", "content": "Pajak Masukan dapat dikreditkan terhadap Pajak Keluaran.", "substance": ["Pajak Masukan hanya dapat dikreditkan oleh PKP.", "Pajak Masukan yang dapat dikreditkan harus memenuhi syarat.", "Pajak Masukan tidak dapat dikreditkan untuk pengadaan barang/jasa tertentu.", "Pengkreditan dilakukan dalam masa pajak tertentu."]}
+      ]
+    },
+    {
+      "id": 4, "category": "pbb", "title": "Undang-Undang Nomor 12 Tahun 1994", "shortName": "UU PBB",
+      "description": "Pajak Bumi dan Bangunan yang dikenakan atas bumi dan bangunan milik Wajib Pajak.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "Pasal 1", "title": "Definisi PBB", "content": "PBB adalah pajak yang dikenakan atas bumi dan/atau bangunan yang dimiliki, dikuasai, dan/atau dimanfaatkan oleh orang pribadi atau badan.", "substance": ["Bumi adalah permukaan bumi dan air yang terdapat di atasnya.", "Bangunan adalah constructible thing yang berdiri di atas bumi dan/atau air.", "PBB dikenakan untuk bumi dan bangunan yang berada di wilayah Indonesia.", "Dasar pengenaan PBB adalah NJOP (Nilai Jual Objek Pajak)."]},
+        {"pasal": "Pasal 2", "title": "Tarif PBB", "content": "Tarif PBB adalah sebesar 0,3% (nol koma tiga persen) dari NJOP bumi dan/atau bangunan.", "substance": ["Tarif PBB: 0,3% dari NJOP.", "NJOP ditetapkan oleh Menteri Keuangan atas nama Pemerintah.", "NJOP bumi dan bangunan ditetapkan berdasarkan potensi ekonomisnya.", "NJOP bumi berbeda dengan NJOP bangunan.", "PBB tidak dikenakan untuk bumi dan bangunan tertentu yang dibebaskan."]},
+        {"pasal": "Pasal 3", "title": "Objek PBB", "content": "Objek PBB adalah bumi dan/atau bangunan yang dimiliki, dikuasai, atau dimanfaatkan oleh WP.", "substance": ["Bumi yang menjadi objek PBB termasuk tanah, perairan, dan kekayaan alam.", "Bangunan yang menjadi objek PBB termasuk rumah, gedung, pabrik.", "PBB tidak dikenakan untuk bumi dan bangunan tertentu.", "PBB dikenakan atas bumi dan bangunan yang berada di wilayah Indonesia."]},
+        {"pasal": "Pasal 7", "title": "Pembebasan PBB", "content": "Bebas PBB adalah pembebasan yang diberikan untuk jangka waktu tertentu.", "substance": ["Bebas PBB untuk jangka waktu paling lama 10 tahun.", "Dapat diberikan untuk proyek strategis nasional.", "Diberikan untuk daerah tertentu yang memerlukan stimulus ekonomi.", "Diberikan atas permohonan Wajib Pajak."]},
+        {"pasal": "Pasal 8", "title": "Penetapan NJOP", "content": "NJOP ditetapkan oleh Menteri Keuangan untuk setiap daerah.", "substance": ["NJOP ditetapkan berdasarkan potensi ekonomis.", "NJOP bumi dan bangunan ditetapkan berbeda.", "NJOP dapat berubah sewaktu-waktu.", "NJOP menjadi dasar pengenaan PBB."]}
+      ]
+    },
+    {
+      "id": 5, "category": "kup-prosedur", "title": "Tata Cara Perpajakan", "shortName": "Tata Cara Pajak",
+      "description": "Prosedur dan mekanisme pemenuhan kewajiban perpajakan.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "Pasal 3 UU KUP", "title": "Kewajiban Mendaftarkan Diri", "content": "Setiap WP wajib mendaftarkan diri untuk memperoleh NPWP.", "substance": ["WP orang pribadi wajib mendaftarkan diri sebelum Tahun Pajak berikutnya.", "WP badan wajib mendaftarkan diri dalam waktu paling lambat 1 bulan setelah didirikan.", "WP yang tidak mendaftarkan diri dikenakan sanksi administrasi.", "Pendaftaran dilakukan secara elektronik melalui DJP Online."]},
+        {"pasal": "Pasal 3A UU KUP", "title": "Kewajiban Membayar Pajak", "content": "Pajak terutang harus dibayar paling lambat tanggal 15 bulan berikutnya.", "substance": ["PPh 21: dibayar paling lambat tanggal 10 bulan berikutnya.", "PPh 23: dibayar paling lambat tanggal 15 bulan berikutnya.", "PPN: dibayar paling lambat tanggal 20 bulan berikutnya.", "PPh 25: dibayar secara angsuran setiap bulan.", "Keterlambatan pembayaran dikenakan bunga 2% per bulan."]},
+        {"pasal": "Pasal 3B UU KUP", "title": "Kewajiban Menyampaikan SPT", "content": "WP wajib menyampaikan SPT Tahunan dan SPT Masa secara elektronik.", "substance": ["SPT Tahunan PPh OP: paling lambat 31 Maret tahun berikutnya.", "SPT Tahunan PPh Badan: paling lambat 4 bulan setelah tahun pajak berakhir.", "SPT Masa PPh 21: paling lambat tanggal 20 bulan berikutnya.", "SPT Masa PPN: paling lambat tanggal 20 bulan berikutnya.", "Penyampaian SPT dilakukan secara elektronik (e-Filing)."]},
+        {"pasal": "Pasal 8 UU KUP", "title": "Surat Ketetapan Pajak", "content": "Surat Ketetapan Pajak (SKP) diterbitkan oleh Kantor Pelayanan Pajak.", "substance": ["SKP terdiri atas: SKPKB, SKPDKB, SKPKBT, SKPDKBT.", "SKPKB: Surat Ketetapan Pajak Kurang Bayar.", "SKPDKB: Surat Pemberitahuan Ketetapan Pajak Kurang Bayar.", "WP dapat melakukan keberatan dalam waktu 3 bulan sejak SKP diterbitkan."]},
+        {"pasal": "Pasal 9 UU KUP", "title": "Keberatan dan Banding", "content": "WP dapat mengajukan keberatan terhadap SKP yang diterbitkan.", "substance": ["Keberatan diajukan dalam waktu 3 bulan sejak SKP diterbitkan.", "Keberatan ditujukan kepada Kepala KPP yang menerbitkan SKP.", "Jika keberatan ditolak, WP dapat mengajukan banding ke Pengadilan Pajak.", "Banding diajukan dalam waktu 3 bulan sejak keputusan keberatan.", "Keputusan banding dapat diajukan Kasasi ke Mahkamah Agung."]},
+        {"pasal": "Pasal 13 UU KUP", "title": "Penagihan Pajak", "content": "Penagihan pajak dilakukan dengan Surat Tagihan Pajak (STP).", "substance": ["STP diterbitkan apabila terdapat kekurangan pembayaran pajak.", "STP harus dibayar dalam waktu 30 hari sejak diterbitkan.", "Keterlambatan pembayaran dikenakan bunga 2% per bulan.", "Penagihan dapat dilakukan dengan paksaan apabila tidak dibayar."]}
+      ]
+    },
+    {
+      "id": 6, "category": "lainnya", "title": "Peraturan Pelaksana", "shortName": "PP & PMK",
+      "description": "Peraturan Pemerintah (PP) dan Peraturan Menteri Keuangan (PMK) terkait.",
+      "status": "berlaku", "lastUpdate": "2024-01-01",
+      "articles": [
+        {"pasal": "PP 23 Tahun 2018", "title": "PPh Final UMKM", "content": "Pajak Penghasilan Final atas penghasilan dari usaha yang diterima atau diperoleh Wajib Pajak yang memiliki peredaran bruto tertentu.", "substance": ["Tarif PPh Final UMKM: 0,5% dari omset bruto.", "Berlaku untuk WP dengan peredaran bruto sampai dengan Rp 4,8 miliar per tahun.", "Tarif ini menggantikan tarif progresif untuk UMKM.", "WP yang memilih PPh Final tidak dapat dikreditkan dengan PPh terutang.", "Berlaku sejak 1 Juli 2018."]},
+        {"pasal": "PMK 18/2021", "title": "e-Faktur dan e-Bupot", "content": "Peraturan tentang Pelaksanaan Peraturan Menteri Keuangan tentang Faktur Pajak Elektronik.", "substance": ["Faktur Pajak Elektronik (e-Faktur) wajib digunakan oleh semua PKP.", "e-Faktur diterbitkan melalui sistem DJP Online.", "Bukti Potong Elektronik (e-Bupot) untuk PPh 23.", "Penyedia Application Service Provider (ASP) dapat digunakan.", "Masa transisi dari manual ke elektronik."]},
+        {"pasal": "PP 36 Tahun 2023", "title": "PPh Final UMKM (Update)", "content": "Perubahan atas PP 23 Tahun 2018 tentang PPh Final untuk UMKM.", "substance": ["Perpanjangan pemberlakuan tarif 0,5% untuk UMKM.", "Batas peredaran bruto tetap Rp 4,8 miliar per tahun.", "WP UMKM dapat memilih antara PPh Final atau PPh Normal.", "Pilihan berlaku selama satu tahun pajak.", "Harus dilaporkan dalam SPT Tahunan."]},
+        {"pasal": "PMK 131/2021", "title": "Konsinyasi PPh Final", "content": "Tata cara penyetoran Pajak Penghasilan Final atas penghasilan dari usaha.", "substance": ["WP dapat melakukan konsinyasi PPh Final ke pengadilan.", "Berlaku jika terjadi sengketa pajak.", "Konsinyasi dilakukan dalam waktu 7 hari setelah putusan.", "Jumlah yang dikonsinyasi adalah PPh yang dipersengketakan."]},
+        {"pasal": "PP 94 Tahun 2010", "title": "Tata Cara Penyetoran PPh Final", "content": "Tata cara penyetoran PPh Final yang terutang oleh WP yang memiliki peredaran bruto tertentu.", "substance": ["Penyetoran PPh Final dilakukan melalui bank persepsi atau kantor pos.", "Bukti setoran harus disimpan oleh WP.", "Penyetoran dilakukan paling lambat tanggal 15 bulan berikutnya.", "WP harus menyampaikan SPT Tahunan."]},
+        {"pasal": "PMK 10/2021", "title": "PPh 23 Atas Sewa", "content": "Pemotongan PPh 23 atas sewa barang dan/atau jasa.", "substance": ["Tarif PPh 23 atas sewa: 2% dari jumlah bruto.", "Berlaku untuk sewa gedung, kendaraan, dan perlengkapan.", "Pemotongan dilakukan oleh penyewa.", "Penyewa wajib menyampaikan SPT Masa PPh 23."]}
+      ]
+    }
+  ]
+};
+        let activeCategory = 'all';
+
+        function loadData() {
+            renderAll();
+        }
+
+        function renderAll() {
+            if (!data) return;
+
+            document.getElementById('lastUpdated').textContent = formatDate(data.lastUpdated);
+            document.getElementById('dataVersion').textContent = data.version;
+            document.getElementById('totalRegs').textContent = data.regulations.length;
+
+            renderCategories();
+            renderRegulations();
+            updateCategorySelect();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoryFilter');
+            let html = `<div class="filter-item ${activeCategory === 'all' ? 'active' : ''}" onclick="filterCategory(this, 'all')">
+                <div class="filter-icon gray"><i class="fas fa-layer-group"></i></div>
+                <span class="filter-text">Semua</span>
+                <span class="filter-count">${data.regulations.length}</span>
+            </div>`;
+
+            data.categories.forEach(cat => {
+                const count = data.regulations.filter(r => r.category === cat.id).length;
+                html += `<div class="filter-item ${activeCategory === cat.id ? 'active' : ''}" onclick="filterCategory(this, '${cat.id}')">
+                    <div class="filter-icon ${cat.color}"><i class="fas ${cat.icon}"></i></div>
+                    <span class="filter-text">${cat.name}</span>
+                    <span class="filter-count">${count}</span>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderRegulations() {
+            const container = document.getElementById('regulationList');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = data.regulations;
+
+            if (activeCategory !== 'all') {
+                filtered = filtered.filter(r => r.category === activeCategory);
+            }
+
+
+
+            if (search) {
+                filtered = filtered.filter(r =>
+                    r.title.toLowerCase().includes(search) ||
+                    r.shortName.toLowerCase().includes(search) ||
+                    r.description.toLowerCase().includes(search) ||
+                    r.articles.some(a =>
+                        a.pasal.toLowerCase().includes(search) ||
+                        a.title.toLowerCase().includes(search) ||
+                        a.content.toLowerCase().includes(search)
+                    )
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+
+            container.innerHTML = filtered.map(reg => {
+                const cat = data.categories.find(c => c.id === reg.category);
+                return `
+                <div class="regulation-card" id="reg-${reg.id}">
+                    <div class="reg-header" onclick="toggleRegulation(${reg.id})">
+                        <div class="reg-header-top">
+                            <div>
+                                <div class="reg-title">${reg.title}</div>
+                                <div class="reg-short">${reg.shortName}</div>
+                            </div>
+
+                        </div>
+                        <div class="reg-desc">${reg.description}</div>
+                        <div class="reg-meta">
+                            <span class="reg-meta-item"><i class="fas fa-folder"></i> ${cat ? cat.name : '-'}</span>
+                            <span class="reg-meta-item"><i class="fas fa-file-lines"></i> ${reg.articles.length} Pasal</span>
+                            <span class="reg-meta-item"><i class="fas fa-clock"></i> Update: ${formatDate(reg.lastUpdate)}</span>
+                        </div>
+                    </div>
+                    <div class="reg-articles" id="articles-${reg.id}">
+                        ${reg.articles.map((article, idx) => `
+                        <div class="article-item">
+                            <div class="article-header" onclick="toggleArticle(${reg.id}, ${idx})">
+                                <div>
+                                    <div class="article-pasal">${article.pasal}</div>
+                                    <div class="article-title-text">${article.title}</div>
+                                </div>
+                                <i class="fas fa-chevron-down article-toggle" id="toggle-${reg.id}-${idx}"></i>
+                            </div>
+                            <div class="article-content" id="content-${reg.id}-${idx}">
+                                <div class="article-main">${article.content}</div>
+                                <div class="substance-list">
+                                    ${article.substance.map(s => `<div class="substance-item">${s}</div>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleRegulation(id) {
+            const el = document.getElementById('articles-' + id);
+            el.classList.toggle('show');
+        }
+
+        function toggleArticle(regId, idx) {
+            const content = document.getElementById('content-' + regId + '-' + idx);
+            const toggle = document.getElementById('toggle-' + regId + '-' + idx);
+            content.classList.toggle('show');
+            toggle.classList.toggle('open');
+        }
+
+        function filterCategory(el, cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.filter-body .filter-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            renderRegulations();
+        }
+
+
+
+        function filterByCategorySelect() {
+            activeCategory = document.getElementById('categorySelect').value || 'all';
+            renderCategories();
+            renderRegulations();
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('categorySelect');
+            select.innerHTML = '<option value="">Semua Kategori</option>';
+            data.categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            });
+        }
+
+        function searchRegulations() {
+            renderRegulations();
+        }
+
+        function formatDate(dateStr) {
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const d = new Date(dateStr);
+            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        function checkForUpdates() {
+            const banner = document.getElementById('updateBanner');
+            banner.style.display = 'flex';
+            document.getElementById('updateMessage').textContent = 'Data peraturan terakhir diperbarui: ' + formatDate(data.lastUpdated);
+        }
+
+        function applyUpdate() {
+            loadData();
+            document.getElementById('updateBanner').style.display = 'none';
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'peraturan-pajak-' + data.lastUpdated + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

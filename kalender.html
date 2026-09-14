@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Kalender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+        .calendar-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+        .cal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .cal-header-left { display: flex; align-items: center; gap: 16px; }
+        .cal-month { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .cal-nav { display: flex; gap: 4px; }
+        .cal-nav button { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 12px; transition: all 0.2s; }
+        .cal-nav button:hover { background: var(--bg-main); border-color: var(--primary-light); color: var(--primary-light); }
+        .cal-today-btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--text-secondary); transition: all 0.2s; }
+        .cal-today-btn:hover { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+        .cal-view-toggle { display: flex; gap: 4px; background: var(--bg-main); border-radius: 8px; padding: 3px; }
+        .cal-view-btn { padding: 6px 14px; border: none; border-radius: 6px; background: transparent; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--text-secondary); transition: all 0.2s; }
+        .cal-view-btn.active { background: white; color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .cal-body { padding: 16px 24px 24px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .cal-day-name { background: var(--bg-main); text-align: center; padding: 10px 4px; font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+        .cal-day { background: white; min-height: 100px; padding: 8px; cursor: pointer; transition: background 0.15s; position: relative; }
+        .cal-day:hover { background: #F8FAFC; }
+        .cal-day.other-month { background: #FAFBFC; }
+        .cal-day.other-month .day-number { color: var(--text-muted); }
+        .cal-day.today { background: #EFF6FF; }
+        .cal-day.today .day-number { background: var(--primary-light); color: white; }
+        .cal-day.selected { outline: 2px solid var(--primary-light); outline-offset: -2px; z-index: 1; }
+        .day-number { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+        .day-events { display: flex; flex-direction: column; gap: 2px; }
+        .event-dot { display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: opacity 0.15s; }
+        .event-dot:hover { opacity: 0.8; }
+        .event-dot.deadline { background: #FEE2E2; color: #DC2626; }
+        .event-dot.meeting { background: #DBEAFE; color: #2563EB; }
+        .event-dot.invoice { background: #D1FAE5; color: #059669; }
+        .event-dot.reminder { background: #FEF3C7; color: #D97706; }
+        .event-more { font-size: 10px; color: var(--primary-light); font-weight: 600; padding: 2px 6px; cursor: pointer; }
+        .event-more:hover { text-decoration: underline; }
+        .sidebar-events { display: flex; flex-direction: column; gap: 16px; }
+        .event-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+        .event-card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .event-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; }
+        .event-card-body { padding: 16px 20px; }
+        .event-list { display: flex; flex-direction: column; gap: 12px; }
+        .event-item { display: flex; gap: 12px; padding: 12px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s; }
+        .event-item:hover { background: var(--bg-main); }
+        .event-date-box { width: 44px; height: 44px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+        .event-date-box .day { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; line-height: 1; }
+        .event-date-box .month { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .event-date-box.red { background: #FEE2E2; color: #DC2626; }
+        .event-date-box.blue { background: #DBEAFE; color: #2563EB; }
+        .event-date-box.green { background: #D1FAE5; color: #059669; }
+        .event-date-box.amber { background: #FEF3C7; color: #D97706; }
+        .event-info { flex: 1; min-width: 0; }
+        .event-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .event-subtitle { font-size: 11px; color: var(--text-muted); }
+        .event-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; margin-top: 2px; }
+        .event-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-top: 4px; }
+        .event-tag.deadline { background: #FEE2E2; color: #DC2626; }
+        .event-tag.meeting { background: #DBEAFE; color: #2563EB; }
+        .event-tag.invoice { background: #D1FAE5; color: #059669; }
+        .event-tag.reminder { background: #FEF3C7; color: #D97706; }
+        .legend-list { display: flex; flex-direction: column; gap: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s; }
+        .legend-item:hover { background: var(--bg-main); }
+        .legend-item.active { background: var(--bg-main); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .legend-dot.red { background: #EF4444; }
+        .legend-dot.blue { background: #3B82F6; }
+        .legend-dot.green { background: #10B981; }
+        .legend-dot.amber { background: #F59E0B; }
+        .legend-text { font-size: 12px; font-weight: 500; color: var(--text-primary); flex: 1; }
+        .legend-count { font-size: 11px; color: var(--text-muted); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; border: none; background: var(--bg-main); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: background 0.2s; }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary-light); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); }
+        .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .detail-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .detail-icon.red { background: #FEE2E2; color: #DC2626; }
+        .detail-icon.blue { background: #DBEAFE; color: #2563EB; }
+        .detail-icon.green { background: #D1FAE5; color: #059669; }
+        .detail-icon.amber { background: #FEF3C7; color: #D97706; }
+        .detail-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; }
+        .detail-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .detail-section { margin-bottom: 16px; }
+        .detail-section-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+        .detail-row .label { color: var(--text-secondary); }
+        .detail-row .value { font-weight: 500; color: var(--text-primary); }
+        .detail-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 12px; background: var(--bg-main); border-radius: var(--radius); }
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .cal-header { flex-wrap: wrap; gap: 12px; } .cal-day { min-height: 60px; padding: 4px; } .day-number { width: 24px; height: 24px; font-size: 11px; } .event-dot { font-size: 0; padding: 4px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Klien</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="klien-pribadi.html" class="nav-item submenu">
+                        <i class="fas fa-user"></i>
+                        <span>Klien Pribadi</span>
+                    </a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu">
+                        <i class="fas fa-building"></i>
+                        <span>Klien Perusahaan</span>
+                    </a>
+                </div>
+                <a href="spt.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>SPT & Pelaporan</span>
+                </a>
+                <a href="konsultasi.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Konsultasi</span>
+                </a>
+                <a href="dokumen.html" class="nav-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Dokumen</span>
+                </a>
+                <a href="ai-assistant.html" class="nav-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="kalkulator.html" class="nav-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>Kalkulator Pajak</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Keuangan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="pendapatan.html" class="nav-item submenu">
+                        <i class="fas fa-arrow-trend-up"></i>
+                        <span>Pendapatan</span>
+                    </a>
+                    <a href="laba-rugi.html" class="nav-item submenu">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Laba/Rugi</span>
+                    </a>
+                    <a href="piutang.html" class="nav-item submenu">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                        <span>Piutang</span>
+                    </a>
+                    <a href="laporan-keuangan.html" class="nav-item submenu">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Laporan Keuangan</span>
+                    </a>
+                </div>
+                <a href="kalender.html" class="nav-item active">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Kalender</span>
+                </a>
+                <a href="laporan.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="peraturan.html" class="nav-item">
+                    <i class="fas fa-gavel"></i>
+                    <span>Peraturan Pajak</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration">
+                    <div class="illustration-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari acara, deadline, atau klien...">
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <span class="user-name">Admin</span>
+                            <span class="user-role">Admin Konsultan Pajak</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-calendar-days" style="color: var(--primary-light); margin-right: 8px;"></i> Kalender</h1>
+                        <p>Jadwal deadline pajak, konsultasi klien, dan pengingat pembayaran</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Acara</button>
+                    </div>
+                </div>
+
+                <div class="main-grid">
+                    <!-- Calendar -->
+                    <div class="calendar-card">
+                        <div class="cal-header">
+                            <div class="cal-header-left">
+                                <div class="cal-nav">
+                                    <button onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
+                                    <button onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <span class="cal-month" id="calMonth">April 2025</span>
+                                <button class="cal-today-btn" onclick="goToday()">Hari Ini</button>
+                            </div>
+                            <div class="cal-view-toggle">
+                                <button class="cal-view-btn active">Bulan</button>
+                                <button class="cal-view-btn">Minggu</button>
+                                <button class="cal-view-btn">Hari</button>
+                            </div>
+                        </div>
+                        <div class="cal-body">
+                            <div class="cal-grid" id="calGrid">
+                                <div class="cal-day-name">Sen</div>
+                                <div class="cal-day-name">Sel</div>
+                                <div class="cal-day-name">Rab</div>
+                                <div class="cal-day-name">Kam</div>
+                                <div class="cal-day-name">Jum</div>
+                                <div class="cal-day-name">Sab</div>
+                                <div class="cal-day-name">Min</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="sidebar-events">
+                        <!-- Legend -->
+                        <div class="event-card">
+                            <div class="event-card-header">
+                                <div class="event-card-title">Kategori</div>
+                            </div>
+                            <div class="event-card-body">
+                                <div class="legend-list">
+                                    <div class="legend-item active" onclick="filterEvents('all')">
+                                        <div class="legend-dot" style="background: var(--text-primary);"></div>
+                                        <span class="legend-text">Semua Acara</span>
+                                        <span class="legend-count">18</span>
+                                    </div>
+                                    <div class="legend-item" onclick="filterEvents('deadline')">
+                                        <div class="legend-dot red"></div>
+                                        <span class="legend-text">Deadline Pajak</span>
+                                        <span class="legend-count">8</span>
+                                    </div>
+                                    <div class="legend-item" onclick="filterEvents('meeting')">
+                                        <div class="legend-dot blue"></div>
+                                        <span class="legend-text">Konsultasi</span>
+                                        <span class="legend-count">6</span>
+                                    </div>
+                                    <div class="legend-item" onclick="filterEvents('invoice')">
+                                        <div class="legend-dot green"></div>
+                                        <span class="legend-text">Invoice</span>
+                                        <span class="legend-count">4</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                        <div class="event-card">
+                            <div class="event-card-header">
+                                <div class="event-card-title">Mendatang</div>
+                                <a href="#" class="link" style="font-size: 12px; font-weight: 600; color: var(--primary-light); text-decoration: none;">Lihat Semua</a>
+                            </div>
+                            <div class="event-card-body">
+                                <div class="event-list" id="upcomingList">
+                                    <!-- Filled by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="event-card">
+                            <div class="event-card-header">
+                                <div class="event-card-title">Ringkasan Bulan Ini</div>
+                            </div>
+                            <div class="event-card-body">
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444;"></span>
+                                            Deadline Pajak
+                                        </span>
+                                        <span style="font-size: 13px; font-weight: 600;">3 hari lagi</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #3B82F6;"></span>
+                                            Konsultasi
+                                        </span>
+                                        <span style="font-size: 13px; font-weight: 600;">4 jadwal</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+                                            Invoice Jatuh Tempo
+                                        </span>
+                                        <span style="font-size: 13px; font-weight: 600;">2 tagihan</span>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 16px; padding: 12px; background: #FEF2F2; border-radius: var(--radius); border-left: 3px solid #EF4444;">
+                                    <div style="font-size: 11px; font-weight: 600; color: #DC2626;">⚠️ Perhatian</div>
+                                    <div style="font-size: 12px; color: #991B1B; margin-top: 4px;">SPT Masa PPN Maret 2025 jatuh tempo 20 April</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Acara -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Tambah Acara Baru</h3>
+                <button class="modal-close" onclick="closeModal('addModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Judul Acara</label>
+                    <input type="text" class="form-input" placeholder="Masukkan judul acara">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select">
+                            <option value="">Pilih kategori</option>
+                            <option value="deadline">Deadline Pajak</option>
+                            <option value="meeting">Konsultasi / Meeting</option>
+                            <option value="invoice">Invoice / Pembayaran</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Klien (Opsional)</label>
+                        <select class="form-select">
+                            <option value="">Pilih klien</option>
+                            <option>PT Maju Jaya</option>
+                            <option>PT Global Solusi</option>
+                            <option>CV Sejahtera Abadi</option>
+                            <option>PT Prima Karya</option>
+                            <option>UD Sinar Mandiri</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu (Opsional)</label>
+                        <input type="time" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-textarea" placeholder="Deskripsi acara..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" checked>
+                        <span style="font-size: 13px; color: var(--text-secondary);">Aktifkan pengingat 1 hari sebelum</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addModal')">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal('addModal')">Simpan Acara</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Acara -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Detail Acara</h3>
+                <button class="modal-close" onclick="closeModal('detailModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="detailBody">
+                <!-- Filled by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('detailModal')">Tutup</button>
+                <button class="btn btn-primary"><i class="fas fa-pen"></i> Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+        function openAddModal() { document.getElementById('addModal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+        });
+
+        // Events Data
+        const events = [
+            { id: 1, title: 'SPT Masa PPN Maret 2025', type: 'deadline', client: 'PT Maju Jaya', date: '2025-04-20', time: '', desc: 'Pelaporan SPT Masa PPN untuk PT Maju Jaya periode Maret 2025. Harus dilaporkan secara elektronik.' },
+            { id: 2, title: 'SPT Masa PPh 21 Maret', type: 'deadline', client: 'CV Sejahtera Abadi', date: '2025-04-21', time: '', desc: 'Pelaporan PPh 21 pegawai CV Sejahtera Abadi untuk masa Maret 2025.' },
+            { id: 3, title: 'Konsultasi Perencanaan Pajak', type: 'meeting', client: 'PT Prima Karya', date: '2025-04-15', time: '10:00', desc: 'Meeting dengan direktur PT Prima Karya untuk membahas strategi perencanaan pajak Q2 2025.' },
+            { id: 4, title: 'Konsultasi SPT Tahunan', type: 'meeting', client: 'Budi Santoso', date: '2025-04-17', time: '14:00', desc: 'Konsultasi penyusunan SPT Tahunan PPh OP tahun 2024.' },
+            { id: 5, title: 'Jatuh Tempo Invoice INV-0046', type: 'invoice', client: 'CV Sejahtera Abadi', date: '2025-04-22', time: '', desc: 'Tagihan untuk layanan perencanaan pajak sebesar Rp 15.000.000 sudah jatuh tempo.' },
+            { id: 6, title: 'SPT Tahunan PT Global Solusi', type: 'deadline', client: 'PT Global Solusi', date: '2025-04-30', time: '', desc: 'Pelaporan SPT Tahunan PPh Badan untuk PT Global Solusi tahun pajak 2024.' },
+            { id: 7, title: 'Review Dokumen Pajak', type: 'meeting', client: 'UD Sinar Mandiri', date: '2025-04-16', time: '09:00', desc: 'Review dokumen-dokumen pendukung perhitungan pajak UD Sinar Mandiri.' },
+            { id: 8, title: 'Jatuh Tempo Invoice INV-0044', type: 'invoice', client: 'PT Maju Jaya', date: '2025-04-18', time: '', desc: 'Tagihan untuk layanan SPT Tahunan sebesar Rp 18.500.000 sudah jatuh tempo.' },
+            { id: 9, title: 'SPT Masa PPN April 2025', type: 'deadline', client: 'Semua Klien PKP', date: '2025-05-20', time: '', desc: 'Batas pelaporan SPT Masa PPN untuk semua klien PKP periode April 2025.' },
+            { id: 10, title: 'Konsultasi Audit Pajak', type: 'meeting', client: 'PT Prima Karya', date: '2025-04-23', time: '13:30', desc: 'Persiapan menghadapi pemeriksaan pajak untuk PT Prima Karya.' },
+            { id: 11, title: 'SPT Masa PPh 23 April', type: 'deadline', client: 'Semua Klien', date: '2025-05-21', time: '', desc: 'Batas pelaporan SPT Masa PPh 23 untuk semua klien yang melakukan pemotongan.' },
+            { id: 12, title: 'Meeting Pembahasan逆', type: 'meeting', client: 'PT Global Solusi', date: '2025-04-25', time: '11:00', desc: 'Pembahasan laporan keuangan dan implikasi pajaknya.' },
+            { id: 13, title: 'Jatuh Tempo Invoice INV-0048', type: 'invoice', client: 'PT Maju Jaya', date: '2025-05-15', time: '', desc: 'Tagihan untuk layanan SPT Masa PPN sebesar Rp 12.500.000.' },
+            { id: 14, title: 'Deadline SPT Tahunan OP', type: 'deadline', client: 'Semua Klien OP', date: '2025-04-30', time: '', desc: 'Batas pelaporan SPT Tahunan PPh OP untuk semua klien orang pribadi tahun pajak 2024.' },
+            { id: 15, title: 'Konsultasi Restitusi Pajak', type: 'meeting', client: 'CV Sejahtera Abadi', date: '2025-04-28', time: '15:00', desc: 'Pembahasan proses pengajuan restitusi PPN CV Sejahtera Abadi.' },
+            { id: 16, title: 'SPT Masa PPN Februari', type: 'deadline', client: 'PT Prima Karya', date: '2025-04-22', time: '', desc: 'Pelaporan SPT Masa PPN untuk PT Prima Karya periode Februari 2025 (keterlambatan).' },
+        ];
+
+        // Calendar State
+        let currentDate = new Date(2025, 3, 1); // April 2025
+        let selectedDate = null;
+
+        const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        function renderCalendar() {
+            const grid = document.getElementById('calGrid');
+            const monthLabel = document.getElementById('calMonth');
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            monthLabel.textContent = monthNames[month] + ' ' + year;
+
+            // Remove old day cells (keep day names)
+            const existingDays = grid.querySelectorAll('.cal-day, .cal-day.other-month');
+            existingDays.forEach(d => d.remove());
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Monday start
+
+            const today = new Date();
+            const todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+
+            // Previous month days
+            const prevMonthLast = new Date(year, month, 0).getDate();
+            for (let i = startDay - 1; i >= 0; i--) {
+                const day = prevMonthLast - i;
+                const dateStr = year + '-' + String(month).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+                grid.appendChild(createDayCell(day, dateStr, true, false));
+            }
+
+            // Current month days
+            for (let d = 1; d <= lastDay.getDate(); d++) {
+                const dateStr = year + '-' + String(month+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+                const isToday = dateStr === todayStr;
+                grid.appendChild(createDayCell(d, dateStr, false, isToday));
+            }
+
+            // Next month days
+            const totalCells = grid.children.length - 7; // subtract day names
+            const remaining = (Math.ceil(totalCells / 7) * 7) - totalCells;
+            for (let i = 1; i <= remaining; i++) {
+                const dateStr = year + '-' + String(month+2).padStart(2,'0') + '-' + String(i).padStart(2,'0');
+                grid.appendChild(createDayCell(i, dateStr, true, false));
+            }
+        }
+
+        function createDayCell(day, dateStr, isOtherMonth, isToday) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-day' + (isOtherMonth ? ' other-month' : '') + (isToday ? ' today' : '');
+
+            const num = document.createElement('div');
+            num.className = 'day-number';
+            num.textContent = day;
+            cell.appendChild(num);
+
+            const dayEvents = events.filter(e => e.date === dateStr);
+            if (dayEvents.length > 0) {
+                const eventsDiv = document.createElement('div');
+                eventsDiv.className = 'day-events';
+                const maxShow = 3;
+                dayEvents.slice(0, maxShow).forEach(ev => {
+                    const dot = document.createElement('div');
+                    dot.className = 'event-dot ' + ev.type;
+                    dot.textContent = ev.title.length > 12 ? ev.title.substring(0, 12) + '...' : ev.title;
+                    dot.title = ev.title;
+                    dot.onclick = function(e) { e.stopPropagation(); showDetail(ev); };
+                    eventsDiv.appendChild(dot);
+                });
+                if (dayEvents.length > maxShow) {
+                    const more = document.createElement('div');
+                    more.className = 'event-more';
+                    more.textContent = '+' + (dayEvents.length - maxShow) + ' lagi';
+                    eventsDiv.appendChild(more);
+                }
+                cell.appendChild(eventsDiv);
+            }
+
+            cell.onclick = function() {
+                document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+                cell.classList.add('selected');
+            };
+
+            return cell;
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function goToday() {
+            currentDate = new Date(2025, 3, 1);
+            renderCalendar();
+        }
+
+        function showDetail(ev) {
+            const body = document.getElementById('detailBody');
+            const colors = { deadline: 'red', meeting: 'blue', invoice: 'green', reminder: 'amber' };
+            const icons = { deadline: 'fa-file-circle-exclamation', meeting: 'fa-comments', invoice: 'fa-file-invoice-dollar', reminder: 'fa-bell' };
+            const labels = { deadline: 'Deadline Pajak', meeting: 'Konsultasi', invoice: 'Invoice', reminder: 'Pengingat' };
+
+            body.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-icon ${colors[ev.type]}"><i class="fas ${icons[ev.type]}"></i></div>
+                    <div>
+                        <div class="detail-title">${ev.title}</div>
+                        <div class="detail-meta"><span class="event-tag ${ev.type}">${labels[ev.type]}</span></div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-section-title">Informasi</div>
+                    <div class="detail-row"><span class="label">Tanggal</span><span class="value">${formatDate(ev.date)}</span></div>
+                    ${ev.time ? `<div class="detail-row"><span class="label">Waktu</span><span class="value">${ev.time} WIB</span></div>` : ''}
+                    <div class="detail-row"><span class="label">Klien</span><span class="value">${ev.client}</span></div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-section-title">Deskripsi</div>
+                    <div class="detail-desc">${ev.desc}</div>
+                </div>
+            `;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        function renderUpcoming() {
+            const list = document.getElementById('upcomingList');
+            const now = new Date(2025, 3, 14);
+            const upcoming = events
+                .filter(e => new Date(e.date) >= now)
+                .sort((a,b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 5);
+
+            const colors = { deadline: 'red', meeting: 'blue', invoice: 'green', reminder: 'amber' };
+
+            list.innerHTML = upcoming.map(ev => {
+                const d = new Date(ev.date);
+                return `
+                    <div class="event-item" onclick="showDetail(events.find(e=>e.id===${ev.id}))">
+                        <div class="event-date-box ${colors[ev.type]}">
+                            <span class="day">${d.getDate()}</span>
+                            <span class="month">${monthShort[d.getMonth()]}</span>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-title">${ev.title}</div>
+                            <div class="event-subtitle">${ev.client}</div>
+                            ${ev.time ? `<div class="event-time"><i class="fas fa-clock" style="margin-right: 4px;"></i>${ev.time} WIB</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterEvents(type) {
+            document.querySelectorAll('.legend-item').forEach(i => i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Init
+        renderCalendar();
+        renderUpcoming();
+    </script>
+</body>
+</html>

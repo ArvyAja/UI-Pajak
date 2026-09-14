@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-ghost { background: transparent; color: var(--text-secondary); }
+        .btn-ghost:hover { background: var(--bg-main); }
+
+        /* AI Chat Layout */
+        .ai-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; height: calc(100vh - 200px); min-height: 500px; }
+
+        /* Left Sidebar - History */
+        .ai-sidebar { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+        .ai-sidebar-header { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .ai-sidebar-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+        .new-chat-btn { width: 100%; padding: 10px; background: var(--primary-light); color: white; border: none; border-radius: var(--radius); font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .new-chat-btn:hover { background: var(--primary); }
+
+        .ai-sidebar-search { padding: 12px 20px; border-bottom: 1px solid var(--border); }
+        .ai-sidebar-search input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 11px; }
+        .ai-sidebar-search input:focus { outline: none; border-color: var(--primary-light); }
+
+        .chat-history { flex: 1; overflow-y: auto; padding: 12px 20px; }
+        .history-group-title { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 8px; }
+        .history-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; margin-bottom: 4px; transition: all 0.2s; }
+        .history-item:hover { background: var(--bg-main); }
+        .history-item.active { background: #EFF6FF; }
+        .history-item-title { font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .history-item-time { font-size: 10px; color: var(--text-muted); }
+        .history-item-badge { display: inline-block; padding: 1px 6px; border-radius: 6px; font-size: 9px; font-weight: 600; margin-left: 6px; }
+        .history-item-badge.pribadi { background: #EFF6FF; color: var(--blue); }
+        .history-item-badge.perusahaan { background: var(--success-bg); color: var(--success); }
+
+        /* Main Chat Area */
+        .ai-chat { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Chat Header */
+        .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%); }
+        .chat-header-left { display: flex; align-items: center; gap: 12px; }
+        .ai-avatar { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-light), #10B981); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+        .ai-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+        .ai-status { font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 4px; }
+        .ai-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+        .chat-header-right { display: flex; gap: 8px; }
+        .header-action { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 14px; }
+        .header-action:hover { background: var(--bg-main); border-color: var(--primary-light); color: var(--primary-light); }
+
+        /* Chat Messages */
+        .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+        .message { display: flex; gap: 12px; max-width: 80%; }
+        .message.ai { align-self: flex-start; }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+        .message-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .message.ai .message-avatar { background: linear-gradient(135deg, var(--primary-light), #10B981); color: white; }
+        .message.user .message-avatar { background: #EFF6FF; color: var(--blue); }
+
+        .message-content { background: var(--bg-main); padding: 14px 18px; border-radius: 16px; font-size: 13px; line-height: 1.6; color: var(--text-primary); }
+        .message.ai .message-content { background: var(--bg-main); border-bottom-left-radius: 4px; }
+        .message.user .message-content { background: var(--primary-light); color: white; border-bottom-right-radius: 4px; }
+
+        .message-time { font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right; }
+        .message.user .message-time { text-align: left; }
+
+        /* AI Response Elements */
+        .ai-response-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 10px; }
+        .ai-response-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .ai-response-title i { color: var(--primary-light); }
+        .ai-response-list { list-style: none; padding: 0; margin: 0; }
+        .ai-response-list li { font-size: 11px; color: var(--text-secondary); padding: 4px 0; display: flex; align-items: flex-start; gap: 6px; }
+        .ai-response-list li::before { content: '•'; color: var(--primary-light); font-weight: bold; }
+
+        .ai-code-block { background: #1E293B; color: #E2E8F0; padding: 14px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.5; margin-top: 10px; overflow-x: auto; }
+        .ai-code-block .keyword { color: #93C5FD; }
+        .ai-code-block .number { color: #FCD34D; }
+        .ai-code-block .string { color: #86EFAC; }
+
+        .ai-tag { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; margin: 2px; }
+        .ai-tag.blue { background: #EFF6FF; color: var(--blue); }
+        .ai-tag.green { background: var(--success-bg); color: var(--success); }
+        .ai-tag.amber { background: var(--warning-bg); color: #D97706; }
+
+        /* Typing Indicator */
+        .typing-indicator { display: flex; align-items: center; gap: 8px; padding: 0 24px; }
+        .typing-dots { display: flex; gap: 4px; }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: typing 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+        /* Suggestion Chips */
+        .suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 24px; border-top: 1px solid var(--border); }
+        .chip { padding: 8px 14px; background: white; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .chip:hover { border-color: var(--primary-light); color: var(--primary-light); background: #F8FAFC; }
+        .chip i { font-size: 10px; }
+
+        /* Chat Input */
+        .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border); background: white; }
+        .chat-input-wrapper { display: flex; align-items: flex-end; gap: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: 16px; padding: 12px 16px; }
+        .chat-input-wrapper:focus-within { border-color: var(--primary-light); }
+        .chat-input-actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .chat-input-action { width: 32px; height: 32px; border: none; background: transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; }
+        .chat-input-action:hover { background: white; color: var(--primary-light); }
+        .chat-input { flex: 1; border: none; outline: none; font-family: inherit; font-size: 13px; background: transparent; resize: none; min-height: 20px; max-height: 120px; line-height: 1.5; }
+        .chat-send { width: 40px; height: 40px; border: none; background: var(--primary-light); color: white; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s; }
+        .chat-send:hover { background: var(--primary); }
+        .chat-send:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+        .chat-input-hint { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+        /* Quick Actions Grid */
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px 24px; }
+        .quick-action { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); text-align: center; cursor: pointer; transition: all 0.2s; }
+        .quick-action:hover { border-color: var(--primary-light); background: #F8FAFC; transform: translateY(-2px); }
+        .quick-action-icon { width: 40px; height: 40px; margin: 0 auto 8px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .quick-action-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .quick-action-icon.green { background: var(--success-bg); color: var(--success); }
+        .quick-action-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .quick-action-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .quick-action-title { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+        .quick-action-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Welcome Screen */
+        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
+        .welcome-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--primary-light), #10B981); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; margin-bottom: 20px; }
+        .welcome-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .welcome-desc { font-size: 14px; color: var(--text-secondary); max-width: 500px; line-height: 1.6; margin-bottom: 32px; }
+
+        @media (max-width: 1200px) { .ai-layout { grid-template-columns: 1fr; } .ai-sidebar { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Klien</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="klien-pribadi.html" class="nav-item submenu"><i class="fas fa-user"></i><span>Klien Pribadi</span></a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu"><i class="fas fa-building"></i><span>Klien Perusahaan</span></a>
+                </div>
+                <a href="spt.html" class="nav-item"><i class="fas fa-file-invoice"></i><span>SPT & Pelaporan</span></a>
+                <a href="konsultasi.html" class="nav-item"><i class="fas fa-comments"></i><span>Konsultasi</span></a>
+                <a href="dokumen.html" class="nav-item"><i class="fas fa-folder-open"></i><span>Dokumen</span></a>
+                <a href="ai-assistant.html" class="nav-item active"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="kalkulator.html" class="nav-item"><i class="fas fa-calculator"></i><span>Kalkulator Pajak</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Keuangan</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="pendapatan.html" class="nav-item submenu"><i class="fas fa-arrow-trend-up"></i><span>Pendapatan</span></a>
+
+                    <a href="laba-rugi.html" class="nav-item submenu"><i class="fas fa-scale-balanced"></i><span>Laba/Rugi</span></a>
+                     <a href="piutang.html" class="nav-item submenu"><i class="fas fa-hand-holding-dollar"></i><span>Piutang</span></a>
+                     <a href="laporan-keuangan.html" class="nav-item submenu"><i class="fas fa-chart-pie"></i><span>Laporan Keuangan</span></a>
+                </div>
+                 <a href="kalender.html" class="nav-item"><i class="fas fa-calendar-days"></i><span>Kalender</span></a>
+                 <a href="laporan.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+                <a href="peraturan.html" class="nav-item"><i class="fas fa-gavel"></i><span>Peraturan Pajak</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-gear"></i><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration"><div class="illustration-icon"><i class="fas fa-file-invoice-dollar"></i><i class="fas fa-shield-halved"></i></div></div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Cari di chat..."></div>
+                <div class="header-right">
+                    <div class="notification-bell"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Admin Konsultan Pajak</span></div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-robot" style="color: var(--primary-light); margin-right: 8px;"></i> AI Assistant</h1>
+                        <p>Asisten cerdas untuk membantu konsultasi pajak, perhitungan, dan analisis regulasi</p>
+                    </div>
+                </div>
+
+                <!-- AI Layout -->
+                <div class="ai-layout">
+                    <!-- Left: Chat History -->
+                    <div class="ai-sidebar">
+                        <div class="ai-sidebar-header">
+                            <h3><i class="fas fa-comments" style="color: var(--primary-light); margin-right: 6px;"></i> Riwayat Chat</h3>
+                            <button class="new-chat-btn" onclick="newChat()"><i class="fas fa-plus"></i> Chat Baru</button>
+                        </div>
+                        <div class="ai-sidebar-search">
+                            <input type="text" placeholder="Cari riwayat...">
+                        </div>
+                        <div class="chat-history">
+                            <div class="history-group-title">Hari Ini</div>
+                            <div class="history-item active">
+                                <div class="history-item-title">Konsultasi PPh 23 Jasa Konsultasi</div>
+                                <div class="history-item-time">14:32 <span class="history-item-badge pribadi">Siti Rahayu</span></div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-item-title">Rekonsiliasi PPN PT Maju Jaya</div>
+                                <div class="history-item-time">10:15 <span class="history-item-badge perusahaan">PT Maju Jaya</span></div>
+                            </div>
+                            <div class="history-group-title">Kemarin</div>
+                            <div class="history-item">
+                                <div class="history-item-title">Perhitungan PPh 21 Karyawan</div>
+                                <div class="history-item-time">16:45 <span class="history-item-badge pribadi">Budi Santoso</span></div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-item-title">Insentif UMKM 2025</div>
+                                <div class="history-item-time">11:20</div>
+                            </div>
+                            <div class="history-group-title">Minggu Lalu</div>
+                            <div class="history-item">
+                                <div class="history-item-title">Tax Planning PT Global Q3</div>
+                                <div class="history-item-time">Kam, 24 Apr <span class="history-item-badge perusahaan">PT Global</span></div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-item-title">Restitusi PPN PT Prima Karya</div>
+                                <div class="history-item-time">Rab, 23 Apr <span class="history-item-badge perusahaan">PT Prima</span></div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-item-title">SPT Tahunan 1770 OP</div>
+                                <div class="history-item-time">Sel, 22 Apr <span class="history-item-badge pribadi">Ahmad H.</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Chat Area -->
+                    <div class="ai-chat">
+                        <!-- Welcome Screen (shown initially) -->
+                        <div class="welcome-screen" id="welcomeScreen">
+                            <div class="welcome-icon"><i class="fas fa-robot"></i></div>
+                            <div class="welcome-title">Halo! Saya TaxBot 🤖</div>
+                            <div class="welcome-desc">Saya adalah asisten AI yang siap membantu Anda dalam konsultasi pajak, perhitungan PPh/PPN, analisis regulasi, dan still banyak lagi.</div>
+
+                            <div class="quick-actions">
+                                <div class="quick-action" onclick="quickAction('Hitung PPh 21 karyawan dengan gaji Rp 15.000.000/bulan')">
+                                    <div class="quick-action-icon blue"><i class="fas fa-calculator"></i></div>
+                                    <div class="quick-action-title">Hitung PPh 21</div>
+                                    <div class="quick-action-desc">Perhitungan pajak penghasilan</div>
+                                </div>
+                                <div class="quick-action" onclick="quickAction('Jelaskan ketentuan PPh 23 atas jasa konsultasi')">
+                                    <div class="quick-action-icon green"><i class="fas fa-file-invoice"></i></div>
+                                    <div class="quick-action-title">PPh 23</div>
+                                    <div class="quick-action-desc">Ketentuan pajak final</div>
+                                </div>
+                                <div class="quick-action" onclick="quickAction('Bagaimana cara pengisian SPT Tahunan 1770?')">
+                                    <div class="quick-action-icon amber"><i class="fas fa-file-alt"></i></div>
+                                    <div class="quick-action-title">SPT Tahunan</div>
+                                    <div class="quick-action-desc">Panduan pengisian SPT</div>
+                                </div>
+                                <div class="quick-action" onclick="quickAction('Apa saja insentif pajak untuk UMKM di tahun 2025?')">
+                                    <div class="quick-action-icon purple"><i class="fas fa-hand-holding-dollar"></i></div>
+                                    <div class="quick-action-title">Insentif UMKM</div>
+                                    <div class="quick-action-desc">Fasilitas pajak UMKM</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages (hidden initially) -->
+                        <div class="chat-messages" id="chatMessages" style="display: none;">
+                            <!-- Messages will be added here -->
+                        </div>
+
+                        <!-- Suggestion Chips -->
+                        <div class="suggestion-chips" id="suggestionChips" style="display: none;">
+                            <div class="chip" onclick="sendSuggestion('Berikan contoh perhitungan PPh 23')"><i class="fas fa-lightbulb"></i> Contoh PPh 23</div>
+                            <div class="chip" onclick="sendSuggestion('Apa itu self assessment?')"><i class="fas fa-question-circle"></i> Self Assessment</div>
+                            <div class="chip" onclick="sendSuggestion('Bandingkan PPh Final vs PPh Progresif')"><i class="fas fa-balance-scale"></i> Final vs Progresif</div>
+                            <div class="chip" onclick="sendSuggestion('Tenggat waktu pelaporan SPT 2025')"><i class="fas fa-calendar"></i> Deadline SPT</div>
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="chat-input-area">
+                            <div class="chat-input-wrapper">
+                                <div class="chat-input-actions">
+                                    <button class="chat-input-action" title="Lampirkan file"><i class="fas fa-paperclip"></i></button>
+                                    <button class="chat-input-action" title="Voice input"><i class="fas fa-microphone"></i></button>
+                                </div>
+                                <textarea class="chat-input" id="chatInput" placeholder="Tanyakan apa saja tentang pajak..." rows="1" onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+                                <button class="chat-send" id="sendBtn" onclick="sendMessage()" disabled><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                            <div class="chat-input-hint">TaxBot dapat membantu perhitungan pajak, analisis regulasi, dan panduan SPT. Selalu verifikasi dengan peraturan terkini.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Chat State
+        let chatActive = false;
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const chatMessages = document.getElementById('chatMessages');
+        const suggestionChips = document.getElementById('suggestionChips');
+
+        // Enable/disable send button
+        chatInput.addEventListener('input', function() {
+            sendBtn.disabled = this.value.trim() === '';
+        });
+
+        // Auto resize textarea
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        // Handle Enter key
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (chatInput.value.trim()) sendMessage();
+            }
+        }
+
+        // Send message
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            if (!chatActive) {
+                welcomeScreen.style.display = 'none';
+                chatMessages.style.display = 'flex';
+                suggestionChips.style.display = 'flex';
+                chatActive = true;
+            }
+
+            addMessage(text, 'user');
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            // Simulate AI thinking
+            setTimeout(() => {
+                const response = generateAIResponse(text);
+                addMessage(response, 'ai');
+            }, 1200);
+        }
+
+        // Add message to chat
+        function addMessage(text, type) {
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const avatar = type === 'ai' ? '<i class="fas fa-robot"></i>' : 'A';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div>
+                    <div class="message-content">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Generate AI response (simulated)
+        function generateAIResponse(query) {
+            const q = query.toLowerCase();
+
+            if (q.includes('pph 21') || q.includes('gaji')) {
+                return `<strong>Perhitungan PPh 21 Karyawan</strong><br><br>
+                    Berdasarkan UU HPP (Harmonisasi Peraturan Perpajakan), berikut perhitungan PPh 21:<br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-calculator"></i> Contoh Perhitungan</div>
+                        <ul class="ai-response-list">
+                            <li>Penghasilan Bruto: Rp 15.000.000/bulan</li>
+                            <li>Penghasilan Tidak Kena Pajak (PTKP): Rp 54.000.000/tahun = Rp 4.500.000/bulan</li>
+                            <li>Penghasilan Kena Pajak: Rp 15.000.000 - Rp 4.500.000 = <strong>Rp 10.500.000</strong></li>
+                            <li>PPh 21 = Rp 10.500.000 × 5% (tarif progresif) = <strong>Rp 525.000/bulan</strong></li>
+                        </ul>
+                    </div>
+                    <br>Tarif PPh 21 Pasal 17 UU HPP:
+                    <br>• 0% untuk penghasilan s/d Rp 60 juta/tahun
+                    <br>• 5% untuk Rp 60 juta - Rp 250 juta/tahun
+                    <br>• 15% untuk Rp 250 juta - Rp 500 juta/tahun
+                    <br>• 25% untuk Rp 500 juta - Rp 5 miliar/tahun
+                    <br>• 30% untuk di atas Rp 5 miliar/tahun`;
+            }
+
+            if (q.includes('pph 23') || q.includes('jasa')) {
+                return `<strong>Ketentuan PPh 23 atas Jasa Konsultasi</strong><br><br>
+                    PPh 23 dikenakan atas pembayaran jasa tertentu yang dilakukan oleh badan pemerintah atau pihak lain yang ditunjuk.<br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-file-invoice"></i> Tarif PPh 23</div>
+                        <ul class="ai-response-list">
+                            <li>Jasa konsultasi: <strong>2%</strong></li>
+                            <li>Jasa teknik: <strong>2%</strong></li>
+                            <li>Jasa manajemen: <strong>2%</strong></li>
+                            <li>Jasa konstruksi: <strong>2%</strong></li>
+                            <li>Sewa dan penghasilan lain: <strong>2%</strong></li>
+                        </ul>
+                    </div>
+                    <br><strong>Yang wajib memotong:</strong>
+                    <br>• Badan pemerintah
+                    <br>• Bentuk usaha tetap (BUT)
+                    <br>• Pihak yang membayar penghasilan sehubungan dengan kegiatan usaha<br><br>
+                    <span class="ai-tag blue">UU HPP</span> <span class="ai-tag green">PMK 18/2021</span>`;
+            }
+
+            if (q.includes('spt') || q.includes('1770') || q.includes('1771')) {
+                return `<strong>Panduan Pengisian SPT Tahunan</strong><br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-file-alt"></i> Jenis SPT</div>
+                        <ul class="ai-response-list">
+                            <li><strong>1770</strong> — Untuk Orang Pribadi (OP) yang menjalankan usaha/jasa</li>
+                            <li><strong>1770 S</strong> — Untuk OP yang tidak menjalankan usaha</li>
+                            <li><strong>1771</strong> — Untuk Badan Usaha (PT, CV, UD, dll)</li>
+                            <li><strong>1772</strong> — Untuk BUT (Bentuk Usaha Tetap)</li>
+                        </ul>
+                    </div>
+                    <br><strong>Tahapan pengisian SPT 1770:</strong>
+                    <br>1. Isi Lampiran I — Penghasilan dan Pengurangan
+                    <br>2. Isi Lampiran II — Usaha dan/atau Pekerjaan Bebas
+                    <br>3. Isi Lampiran III — Penghasilan Lainnya
+                    <br>4. Isi SPT utama — Hitung pajak terutang
+                    <br>5. Lapor melalui e-Filing atau e-FORM<br><br>
+                    <span class="ai-tag amber">Deadline: 30 April 2025</span>`;
+            }
+
+            if (q.includes('insentif') || q.includes('umkm')) {
+                return `<strong>Insentif Pajak UMKM 2025</strong><br><br>
+                    Berikut insentif pajak yang berlaku untuk UMKM di tahun 2025:<br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-hand-holding-dollar"></i> Fasilitas UMKM</div>
+                        <ul class="ai-response-list">
+                            <li><strong>PPh Final 0,5%</strong> — Dari omzet (berlaku hingga Desember 2025)</li>
+                            <li><strong>PPh Final 1%</strong> — Dari omzet untuk WPOP dengan omzet tertentu</li>
+                            <li><strong>PPTKP Rp 4,8 miliar</strong> — Penghasilan Kena Pajak sampai Rp 4,8 miliar</li>
+                            <li><strong>PPN Tidak Dipungut</strong> — Untuk transaksi tertentu UMKM</li>
+                        </ul>
+                    </div>
+                    <br><strong>Syarat UMKM:</strong>
+                    <br>• Omzet maksimal Rp 4,8 miliar/tahun
+                    <br>• Memiliki NIB (Nomor Induk Berusaha)
+                    <br>• Terdaftar sebagai PKP atau non-PKP<br><br>
+                    <span class="ai-tag green">UU Cipta Kerja</span> <span class="ai-tag blue">UU HPP</span>`;
+            }
+
+            if (q.includes('rekonsiliasi') || q.includes('ppn')) {
+                return `<strong>Rekonsiliasi PPN</strong><br><br>
+                    Rekonsiliasi PPN dilakukan untuk mencocokkan data Faktur Pajak Masukan (FPM) dengan Faktur Pajak Keluaran (FPK).<br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-sync-alt"></i> Langkah Rekonsiliasi</div>
+                        <ul class="ai-response-list">
+                            <li>1. Download laporan PPN dari DJP Online</li>
+                            <li>2. Bandingkan FPM dengan catatan pembelian</li>
+                            <li>3. Bandingkan FPK dengan catatan penjualan</li>
+                            <li>4. Identifikasi selisih dan koreksi</li>
+                            <li>5. Siapkan SPT Masa PPN (1111)</li>
+                        </ul>
+                    </div>
+                    <br><strong>Dokumen yang diperlukan:</strong>
+                    <br>• e-Faktur (FPK dan FPM)
+                    <br>• Buku Pembelian dan Buku Penjualan
+                    <br>• Invoice dari supplier
+                    <br>• Kwitansi pembayaran<br><br>
+                    <span class="ai-tag amber">Deadline: 20 hari setelah masa pajak berakhir</span>`;
+            }
+
+            if (q.includes('self assessment') || q.includes('self-assessment')) {
+                return `<strong>Sistem Self Assessment</strong><br><br>
+                    Self assessment adalah sistem perpajakan di mana Wajib Pajak (WP) bertanggung jawab untuk:<br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-user-check"></i> Prinsip Self Assessment</div>
+                        <ul class="ai-response-list">
+                            <li><strong>Menghitung</strong> — WP menghitung sendiri pajak terutang</li>
+                            <li><strong>Membayar</strong> — WP membayar pajak tepat waktu</li>
+                            <li><strong>Melapor</strong> — WP melaporkan SPT tepat waktu</li>
+                        </ul>
+                    </div>
+                    <br><strong>Konsekuensi pelanggaran:</strong>
+                    <br>• Sanksi administrasi (denda)
+                    <br>• Sanksi pidana (untuk WP yang lalai/tidak jujur)
+                    <br>• Bunga keterlambatan`;
+            }
+
+            if (q.includes('deadline') || q.includes('tenggat') || q.includes('jatuh tempo')) {
+                return `<strong>Tenggat Waktu Pelaporan SPT 2025</strong><br><br>
+                    <div class="ai-response-card">
+                        <div class="ai-response-title"><i class="fas fa-calendar-alt"></i> Deadline Pajak</div>
+                        <ul class="ai-response-list">
+                            <li><strong>SPT Masa PPN</strong> — Tanggal 20 setiap bulan berikutnya</li>
+                            <li><strong>SPT Masa PPh 21/23</strong> — Tanggal 10 bulan berikutnya</li>
+                            <li><strong>SPT Tahunan OP (1770/1770S)</strong> — 30 April 2025</li>
+                            <li><strong>SPT Tahunan Badan (1771)</strong> — 30 April 2025</li>
+                            <li><strong>SPT Tahunan PPh 23</strong> — 31 Januari 2025</li>
+                        </ul>
+                    </div>
+                    <br><strong>Cara pelaporan:</strong>
+                    <br>• e-Filing melalui DJP Online
+                    <br>• e-FORM untuk SPT tertentu
+                    <br>• KPP setempat (untuk kasus tertentu)<br><br>
+                    <span class="ai-tag red">⚠ Pastikan lapor sebelum deadline!</span>`;
+            }
+
+            // Default response
+            return `Terima kasih atas pertanyaannya. Berdasarkan analisis saya:<br><br>
+                Pertanyaan Anda tentang <strong>"${query}"</strong> memerlukan analisis lebih lanjut. Berikut beberapa hal yang perlu diperhatikan:<br><br>
+                <div class="ai-response-card">
+                    <div class="ai-response-title"><i class="fas fa-info-circle"></i> Ringkasan</div>
+                    <ul class="ai-response-list">
+                        <li>Pastikan merujuk pada peraturan terkini (UU HPP, PMK terbaru)</li>
+                        <li>Periksa apakah ada perubahan tarif atau ketentuan</li>
+                        <li>Konsultasikan dengan tim untuk kasus spesifik</li>
+                        <li>Dokumentasikan semua bukti pendukung</li>
+                    </ul>
+                </div>
+                <br>Mau saya jelaskan lebih detail tentang aspek tertentu dari pertanyaan ini?`;
+        }
+
+        // Quick action
+        function quickAction(text) {
+            chatInput.value = text;
+            sendMessage();
+        }
+
+        // Send suggestion
+        function sendSuggestion(text) {
+            chatInput.value = text;
+            sendMessage();
+        }
+
+        // New chat
+        function newChat() {
+            chatActive = false;
+            welcomeScreen.style.display = 'flex';
+            chatMessages.style.display = 'none';
+            suggestionChips.style.display = 'none';
+            chatMessages.innerHTML = '';
+        }
+    </script>
+</body>
+</html>

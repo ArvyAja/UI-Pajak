@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Pendapatan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: var(--radius-lg); padding: 20px; border: 1px solid var(--border); }
+        .stat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .stat-card-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+        .stat-card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .stat-card-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .stat-card-icon.green { background: var(--success-bg); color: var(--success); }
+        .stat-card-icon.amber { background: var(--warning-bg); color: var(--amber); }
+        .stat-card-icon.purple { background: var(--info-bg); color: var(--purple); }
+        .stat-card-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .stat-card-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .stat-card-change.up { color: var(--success); }
+        .stat-card-change.down { color: var(--danger); }
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .chart-card { background: white; border-radius: var(--radius-lg); padding: 20px; border: 1px solid var(--border); }
+        .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+        .card-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .card-header p { font-size: 12px; color: var(--text-secondary); }
+        .chart-legend { display: flex; gap: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.blue { background: var(--blue); }
+        .dot.green { background: var(--green); }
+        .dot.amber { background: var(--amber); }
+        .dot.purple { background: var(--purple); }
+        .chart-container { height: 260px; position: relative; }
+        .donut-container { display: flex; align-items: center; justify-content: center; height: 200px; position: relative; }
+        .donut-center { position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .donut-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .donut-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); }
+        .komposisi-legend { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .legend-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .legend-percent { font-weight: 600; color: var(--text-primary); }
+        .link { font-size: 12px; font-weight: 600; color: var(--primary-light); text-decoration: none; }
+        .link:hover { text-decoration: underline; }
+        .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-inline { position: relative; flex: 1; min-width: 250px; }
+        .search-inline i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .search-inline input { width: 100%; padding: 10px 16px 10px 40px; background: white; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .search-inline input:focus { outline: none; border-color: var(--primary-light); }
+        .filter-select { padding: 10px 16px; background: white; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; color: var(--text-primary); cursor: pointer; min-width: 160px; }
+        .filter-select:focus { outline: none; border-color: var(--primary-light); }
+        .table-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+        .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .table-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+        .data-table td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .data-table tbody tr:hover { background: #F8FAFC; }
+        .client-cell { display: flex; align-items: center; gap: 12px; }
+        .client-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+        .client-avatar.blue { background: #EFF6FF; color: var(--blue); }
+        .client-avatar.green { background: var(--success-bg); color: var(--success); }
+        .client-avatar.purple { background: var(--info-bg); color: var(--purple); }
+        .client-avatar.amber { background: var(--warning-bg); color: var(--amber); }
+        .amount { font-weight: 600; text-align: right; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+        .status-badge.paid { background: var(--success-bg); color: var(--success); }
+        .status-badge.paid::before { background: var(--success); }
+        .status-badge.pending { background: var(--warning-bg); color: var(--amber); }
+        .status-badge.pending::before { background: var(--amber); }
+        .status-badge.overdue { background: var(--danger-bg); color: var(--danger); }
+        .status-badge.overdue::before { background: var(--danger); }
+        .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); }
+        .table-info { font-size: 13px; color: var(--text-secondary); }
+        .pagination { display: flex; align-items: center; gap: 4px; }
+        .page-btn { min-width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 6px; background: white; font-family: inherit; font-size: 12px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .page-btn:hover:not(:disabled):not(.active) { background: var(--bg-main); }
+        .page-btn.active { background: var(--primary-light); border-color: var(--primary-light); color: white; }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .bottom-row { display: grid; grid-template-columns: 1fr 360px; gap: 16px; margin-bottom: 24px; }
+        .summary-card { background: white; border-radius: var(--radius-lg); padding: 20px; border: 1px solid var(--border); }
+        .summary-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row .label { font-size: 13px; color: var(--text-secondary); }
+        .summary-row .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .summary-row .value.green { color: var(--success); }
+        .summary-row .value.blue { color: var(--primary-light); }
+        .summary-divider { height: 1px; background: var(--border); margin: 8px 0; }
+        .summary-total { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+        .summary-total .label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .summary-total .value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; color: var(--success); }
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } .bottom-row { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr; } .filter-bar { flex-direction: column; } .table-footer { flex-direction: column; gap: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Klien</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="klien-pribadi.html" class="nav-item submenu">
+                        <i class="fas fa-user"></i>
+                        <span>Klien Pribadi</span>
+                    </a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu">
+                        <i class="fas fa-building"></i>
+                        <span>Klien Perusahaan</span>
+                    </a>
+                </div>
+                <a href="spt.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>SPT & Pelaporan</span>
+                </a>
+                <a href="konsultasi.html" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Konsultasi</span>
+                </a>
+                <a href="dokumen.html" class="nav-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Dokumen</span>
+                </a>
+                <a href="ai-assistant.html" class="nav-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="kalkulator.html" class="nav-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>Kalkulator Pajak</span>
+                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)">
+                        <span>Keuangan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <a href="pendapatan.html" class="nav-item submenu active">
+                        <i class="fas fa-arrow-trend-up"></i>
+                        <span>Pendapatan</span>
+                    </a>
+                    <a href="laba-rugi.html" class="nav-item submenu">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Laba/Rugi</span>
+                    </a>
+                    <a href="#" class="nav-item submenu">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                        <span>Piutang</span>
+                    </a>
+                    <a href="#" class="nav-item submenu">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Laporan Keuangan</span>
+                    </a>
+                </div>
+                 <a href="kalender.html" class="nav-item">
+                     <i class="fas fa-calendar-days"></i>
+                     <span>Kalender</span>
+                 </a>
+                <a href="laporan.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="peraturan.html" class="nav-item">
+                    <i class="fas fa-gavel"></i>
+                    <span>Peraturan Pajak</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration">
+                    <div class="illustration-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari klien, invoice, atau transaksi...">
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <span class="user-name">Admin</span>
+                            <span class="user-role">Admin Konsultan Pajak</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-arrow-trend-up" style="color: var(--primary-light); margin-right: 8px;"></i> Pendapatan</h1>
+                        <p>Kelola dan pantau seluruh pendapatan kantor konsultan pajak Anda</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Tambah Pendapatan</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Pendapatan</span>
+                            <div class="stat-card-icon blue"><i class="fas fa-money-bill-wave"></i></div>
+                        </div>
+                        <div class="stat-card-value">Rp 125.750.000</div>
+                        <div class="stat-card-change up"><i class="fas fa-arrow-up"></i> +15% dari bulan lalu</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Pendapatan Diterima</span>
+                            <div class="stat-card-icon green"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="stat-card-value">Rp 98.500.000</div>
+                        <div class="stat-card-change up"><i class="fas fa-arrow-up"></i> +12% dari bulan lalu</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Belum Diterima</span>
+                            <div class="stat-card-icon amber"><i class="fas fa-clock"></i></div>
+                        </div>
+                        <div class="stat-card-value">Rp 27.250.000</div>
+                        <div class="stat-card-change down"><i class="fas fa-arrow-down"></i> -8% dari bulan lalu</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Rata-rata per Klien</span>
+                            <div class="stat-card-icon purple"><i class="fas fa-user"></i></div>
+                        </div>
+                        <div class="stat-card-value">Rp 2.620.000</div>
+                        <div class="stat-card-change up"><i class="fas fa-arrow-up"></i> +5% dari bulan lalu</div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Tren Pendapatan Bulanan</h3>
+                                <p>Pendapatan dalam 6 bulan terakhir</p>
+                            </div>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot blue"></span> Pendapatan</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pendapatanTrenChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Pendapatan per Layanan</h3>
+                                <p>Berdasarkan jenis layanan</p>
+                            </div>
+                        </div>
+                        <div class="chart-container donut-container">
+                            <canvas id="layananChart"></canvas>
+                            <div class="donut-center">
+                                <span class="donut-label">Total</span>
+                                <span class="donut-value">Rp 125,7 jt</span>
+                            </div>
+                        </div>
+                        <div class="komposisi-legend">
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot blue"></span> Pelaporan SPT</span>
+                                <span class="legend-percent">32%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot green"></span> Konsultasi Pajak</span>
+                                <span class="legend-percent">24%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot purple"></span> Perencanaan Pajak</span>
+                                <span class="legend-percent">18%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot amber"></span> Audit Pajak</span>
+                                <span class="legend-percent">14%</span>
+                            </div>
+                            <div class="legend-row">
+                                <span class="legend-item"><span class="dot" style="background: var(--gray);"></span> Lainnya</span>
+                                <span class="legend-percent">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-row">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h3>Daftar Transaksi Pendapatan</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Klien</th>
+                                        <th>Layanan</th>
+                                        <th>Invoice</th>
+                                        <th style="text-align: right;">Jumlah (Rp)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>28 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar blue">MJ</div>
+                                                <span>PT Maju Jaya</span>
+                                            </div>
+                                        </td>
+                                        <td>Pelaporan SPT PPN</td>
+                                        <td><code>INV-0048</code></td>
+                                        <td class="amount">12.500.000</td>
+                                        <td><span class="status-badge paid">Dibayar</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>25 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar green">GS</div>
+                                                <span>PT Global Solusi</span>
+                                            </div>
+                                        </td>
+                                        <td>Konsultasi Pajak</td>
+                                        <td><code>INV-0047</code></td>
+                                        <td class="amount">8.750.000</td>
+                                        <td><span class="status-badge paid">Dibayar</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>22 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar purple">SA</div>
+                                                <span>CV Sejahtera Abadi</span>
+                                            </div>
+                                        </td>
+                                        <td>Perencanaan Pajak</td>
+                                        <td><code>INV-0046</code></td>
+                                        <td class="amount">15.000.000</td>
+                                        <td><span class="status-badge pending">Menunggu</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>20 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar amber">PK</div>
+                                                <span>PT Prima Karya</span>
+                                            </div>
+                                        </td>
+                                        <td>Audit Pajak</td>
+                                        <td><code>INV-0045</code></td>
+                                        <td class="amount">25.000.000</td>
+                                        <td><span class="status-badge paid">Dibayar</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>18 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar blue">MJ</div>
+                                                <span>PT Maju Jaya</span>
+                                            </div>
+                                        </td>
+                                        <td>Pelaporan SPT Tahunan</td>
+                                        <td><code>INV-0044</code></td>
+                                        <td class="amount">18.500.000</td>
+                                        <td><span class="status-badge paid">Dibayar</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>15 Apr 2025</td>
+                                        <td>
+                                            <div class="client-cell">
+                                                <div class="client-avatar green">GS</div>
+                                                <span>PT Global Solusi</span>
+                                            </div>
+                                        </td>
+                                        <td>Pelaporan SPT PPh 21</td>
+                                        <td><code>INV-0043</code></td>
+                                        <td class="amount">7.500.000</td>
+                                        <td><span class="status-badge overdue">Terlambat</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <span class="table-info">Menampilkan 1-6 dari 48 transaksi</span>
+                            <div class="pagination">
+                                <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <button class="page-btn">4</button>
+                                <button class="page-btn">5</button>
+                                <button class="page-btn">6</button>
+                                <button class="page-btn">7</button>
+                                <button class="page-btn">8</button>
+                                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-title">Ringkasan Pendapatan</div>
+                        <div class="summary-row">
+                            <span class="label">Pelaporan SPT</span>
+                            <span class="value">Rp 40.240.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Konsultasi Pajak</span>
+                            <span class="value">Rp 30.180.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Perencanaan Pajak</span>
+                            <span class="value">Rp 22.635.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Audit Pajak</span>
+                            <span class="value">Rp 17.605.000</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Lainnya</span>
+                            <span class="value">Rp 15.090.000</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-total">
+                            <span class="label">Total Pendapatan</span>
+                            <span class="value green">Rp 125.750.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Pendapatan -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3>Tambah Pendapatan</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Klien</label>
+                        <select style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px;">
+                            <option value="">Pilih klien</option>
+                            <option>PT Maju Jaya</option>
+                            <option>PT Global Solusi</option>
+                            <option>CV Sejahtera Abadi</option>
+                            <option>PT Prima Karya</option>
+                            <option>UD Sinar Mandiri</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Jenis Layanan</label>
+                        <select style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px;">
+                            <option value="">Pilih layanan</option>
+                            <option>Pelaporan SPT</option>
+                            <option>Konsultasi Pajak</option>
+                            <option>Perencanaan Pajak</option>
+                            <option>Audit Pajak</option>
+                            <option>Lainnya</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Jumlah (Rp)</label>
+                        <input type="text" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px;" placeholder="Masukkan jumlah">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Tanggal</label>
+                        <input type="date" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px; grid-column: span 2;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Deskripsi</label>
+                        <textarea style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; min-height: 80px; resize: vertical;" placeholder="Deskripsi pendapatan..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border);">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay')?.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Tren Pendapatan Chart
+        new Chart(document.getElementById('pendapatanTrenChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Nov', 'Des', 'Jan', 'Feb', 'Mar', 'Apr'],
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: [95000000, 102000000, 88000000, 110000000, 109500000, 125750000],
+                    backgroundColor: '#3B82F6',
+                    borderRadius: 6,
+                    barThickness: 32
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => 'Rp ' + (v/1000000).toFixed(0) + 'jt', font: { size: 11 } },
+                        grid: { color: '#F1F5F9' }
+                    },
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                }
+            }
+        });
+
+        // Layanan Chart
+        new Chart(document.getElementById('layananChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Pelaporan SPT', 'Konsultasi Pajak', 'Perencanaan Pajak', 'Audit Pajak', 'Lainnya'],
+                datasets: [{
+                    data: [32, 24, 18, 14, 12],
+                    backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#94A3B8'],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

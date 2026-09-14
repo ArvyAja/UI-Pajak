@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Kalkulator Pajak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-amber { background: #D97706; color: white; }
+
+        /* Main Tab */
+        .main-tabs { display: flex; gap: 0; margin-bottom: 24px; background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .main-tab { flex: 1; padding: 16px; border: none; background: white; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; border-right: 1px solid var(--border); }
+        .main-tab:last-child { border-right: none; }
+        .main-tab.active { background: var(--primary-light); color: white; }
+        .main-tab:hover:not(.active) { background: var(--bg-main); }
+        .main-tab i { font-size: 18px; }
+
+        /* Calculator Grid */
+        .calc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .calc-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; cursor: pointer; transition: all 0.2s; }
+        .calc-card:hover { border-color: var(--primary-light); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1); }
+        .calc-card.active { border-color: var(--primary-light); background: #F8FAFC; }
+        .calc-card-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+        .calc-card-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .calc-card-icon.green { background: var(--success-bg); color: var(--success); }
+        .calc-card-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .calc-card-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .calc-card-icon.red { background: var(--danger-bg); color: var(--danger); }
+        .calc-card-icon.indigo { background: #EEF2FF; color: var(--indigo); }
+        .calc-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .calc-card-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+        /* Calculator Form */
+        .calc-form-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .calc-form-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-main); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+        .calc-form-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .calc-form-body { padding: 24px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input, .form-select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-light); }
+        .form-input.prefix { padding-left: 32px; }
+        .input-wrapper { position: relative; }
+        .input-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+        /* Result Card */
+        .result-section { margin-top: 24px; }
+        .result-card { background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%); border: 1px solid #BFDBFE; border-radius: var(--radius-lg); padding: 24px; }
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .result-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .result-actions { display: flex; gap: 8px; }
+        .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .result-item { background: white; border-radius: var(--radius); padding: 16px; }
+        .result-item.full { grid-column: 1 / -1; }
+        .result-item-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .result-item-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .result-item-value.blue { color: var(--blue); }
+        .result-item-value.green { color: var(--success); }
+        .result-item-value.amber { color: #D97706; }
+        .result-item-value.red { color: var(--danger); }
+        .result-item-note { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Tarif Table */
+        .tarif-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .tarif-table th, .tarif-table td { padding: 10px 12px; font-size: 11px; border-bottom: 1px solid var(--border); text-align: left; }
+        .tarif-table th { background: var(--bg-main); font-weight: 600; color: var(--text-muted); }
+        .tarif-table tr:last-child td { border-bottom: none; }
+        .tarif-table .highlight { background: #EFF6FF; font-weight: 600; color: var(--blue); }
+
+        /* History Section */
+        .history-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-top: 24px; }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th { text-align: left; padding: 12px 16px; font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+        .history-table td { padding: 12px 16px; font-size: 12px; color: var(--text-primary); border-bottom: 1px solid var(--border); }
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover td { background: var(--bg-main); }
+
+        .badge { padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+        .badge-pribadi { background: #EFF6FF; color: var(--blue); }
+        .badge-perusahaan { background: var(--success-bg); color: var(--success); }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+
+        @media (max-width: 1200px) { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 600; }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-main);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #065F46;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 99999;
+        }
+
+        /* Summary Section */
+        .summary-section { margin-top: 24px; }
+        .summary-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .summary-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, #EEF2FF 0%, #F0FDF4 100%); border-bottom: 1px solid var(--border); }
+        .summary-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+        .summary-title i { color: var(--purple); font-size: 20px; }
+        .summary-actions { display: flex; gap: 8px; }
+        .summary-body { padding: 24px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .summary-item { background: var(--bg-main); border-radius: var(--radius); padding: 16px; text-align: center; }
+        .summary-item.total { background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border: 2px solid var(--purple); }
+        .summary-item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; text-align: left; }
+        .summary-item-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .summary-item-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .summary-item-icon.green { background: var(--success-bg); color: var(--success); }
+        .summary-item-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .summary-item-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .summary-item-title { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .summary-item-subtitle { font-size: 10px; color: var(--text-muted); }
+        .summary-item-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .summary-item-value.green { color: var(--success); }
+        .summary-item-value.amber { color: #D97706; }
+        .summary-item-value.purple { color: var(--purple); }
+        .summary-item-note { font-size: 10px; color: var(--text-muted); }
+
+        .summary-detail { border-top: 1px solid var(--border); padding-top: 20px; }
+        .summary-table { width: 100%; border-collapse: collapse; }
+        .summary-table th { text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+        .summary-table td { padding: 12px; font-size: 12px; color: var(--text-primary); border-bottom: 1px solid var(--border); }
+        .summary-table tfoot td { border-bottom: none; background: var(--bg-main); }
+
+        @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .summary-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Klien</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="klien-pribadi.html" class="nav-item submenu"><i class="fas fa-user"></i><span>Klien Pribadi</span></a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu"><i class="fas fa-building"></i><span>Klien Perusahaan</span></a>
+                </div>
+                <a href="spt.html" class="nav-item"><i class="fas fa-file-invoice"></i><span>SPT & Pelaporan</span></a>
+                <a href="konsultasi.html" class="nav-item"><i class="fas fa-comments"></i><span>Konsultasi</span></a>
+                <a href="dokumen.html" class="nav-item"><i class="fas fa-folder-open"></i><span>Dokumen</span></a>
+                <a href="ai-assistant.html" class="nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="kalkulator.html" class="nav-item active"><i class="fas fa-calculator"></i><span>Kalkulator Pajak</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Keuangan</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="pendapatan.html" class="nav-item submenu"><i class="fas fa-arrow-trend-up"></i><span>Pendapatan</span></a>
+
+                    <a href="laba-rugi.html" class="nav-item submenu"><i class="fas fa-scale-balanced"></i><span>Laba/Rugi</span></a>
+                     <a href="piutang.html" class="nav-item submenu"><i class="fas fa-hand-holding-dollar"></i><span>Piutang</span></a>
+                     <a href="laporan-keuangan.html" class="nav-item submenu"><i class="fas fa-chart-pie"></i><span>Laporan Keuangan</span></a>
+                </div>
+                 <a href="kalender.html" class="nav-item"><i class="fas fa-calendar-days"></i><span>Kalender</span></a>
+                 <a href="laporan.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+                <a href="peraturan.html" class="nav-item"><i class="fas fa-gavel"></i><span>Peraturan Pajak</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-gear"></i><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration"><div class="illustration-icon"><i class="fas fa-file-invoice-dollar"></i><i class="fas fa-shield-halved"></i></div></div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Cari kalkulator..."></div>
+                <div class="header-right">
+                    <div class="notification-bell"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Admin Konsultan Pajak</span></div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-calculator" style="color: var(--primary-light); margin-right: 8px;"></i> Kalkulator Pajak</h1>
+                        <p>Hitung PPh 21, PPh 23, PPN, dan pajak lainnya secara instan</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="showHistory()"><i class="fas fa-history"></i> Riwayat</button>
+                        <button class="btn btn-primary" onclick="resetCalc()"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                </div>
+
+                <!-- Main Tabs: Pribadi / Perusahaan -->
+                <div class="main-tabs">
+                    <button class="main-tab active" onclick="switchMainTab(this, 'pribadi')">
+                        <i class="fas fa-user"></i> Pribadi
+                    </button>
+                    <button class="main-tab" onclick="switchMainTab(this, 'perusahaan')">
+                        <i class="fas fa-building"></i> Perusahaan
+                    </button>
+                </div>
+
+                <!-- PRIBADI Tab Content -->
+                <div id="pribadiContent">
+                    <!-- Calculator Cards -->
+                    <div class="calc-grid">
+                        <div class="calc-card active" onclick="selectCalc(this, 'pph21')">
+                            <div class="calc-card-icon blue"><i class="fas fa-calculator"></i></div>
+                            <div class="calc-card-title">PPh 21 Gaji</div>
+                            <div class="calc-card-desc">Hitung pajak penghasilan karyawan dari gaji bruto</div>
+                        </div>
+                        <div class="calc-card" onclick="selectCalc(this, 'pph23')">
+                            <div class="calc-card-icon green"><i class="fas fa-file-invoice"></i></div>
+                            <div class="calc-card-title">PPh 23 Jasa</div>
+                            <div class="calc-card-desc">Hitung pajak final atas jasa konsultasi & lainnya</div>
+                        </div>
+                        <div class="calc-card" onclick="selectCalc(this, 'pphfinal')">
+                            <div class="calc-card-icon amber"><i class="fas fa-store"></i></div>
+                            <div class="calc-card-title">PPh Final UMKM</div>
+                            <div class="calc-card-desc">Hitung pajak final 0.5% dari omzet UMKM</div>
+                        </div>
+                    </div>
+
+                    <!-- PPh 21 Form -->
+                    <div class="calc-form-section" id="calc-pph21">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-calculator" style="color: var(--primary-light);"></i> Kalkulator PPh 21 — Gaji Karyawan</div>
+                            <div style="display: flex; gap: 8px;">
+                                <span class="badge badge-pribadi">Pribadi</span>
+                                <span class="badge badge-success">UU HPP 2025</span>
+                            </div>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Karyawan</label>
+                                    <input type="text" class="form-input" id="pph21_nama" placeholder="Contoh: Budi Santoso">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Status PTKP</label>
+                                    <select class="form-select" id="pph21_ptkp">
+                                        <option value="TK/0">TK/0 — Tidak Kawin, 0 Anak</option>
+                                        <option value="TK/1">TK/1 — Tidak Kawin, 1 Anak</option>
+                                        <option value="TK/2">TK/2 — Tidak Kawin, 2 Anak</option>
+                                        <option value="TK/3">TK/3 — Tidak Kawin, 3 Anak</option>
+                                        <option value="K/0" selected>K/0 — Kawin, 0 Anak</option>
+                                        <option value="K/1">K/1 — Kawin, 1 Anak</option>
+                                        <option value="K/2">K/2 — Kawin, 2 Anak</option>
+                                        <option value="K/3">K/3 — Kawin, 3 Anak</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Penghasilan Bruto per Bulan</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph21_bruto" placeholder="0" oninput="hitungPPh21()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Biaya Jabatan (%)</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" class="form-input" id="pph21_biaya_jabatan" value="5" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Iuran JKK, JKM, JHT, JP</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph21_iuran" placeholder="0" oninput="hitungPPh21()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Penghasilan Lainnya (Tunjangan)</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph21_tunjangan" placeholder="0" oninput="hitungPPh21()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Result -->
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPh 21</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('pph21')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('pph21')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">Penghasilan Bruto</div>
+                                            <div class="result-item-value" id="r_pph21_bruto">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Penghasilan Netto (Bruto - Biaya)</div>
+                                            <div class="result-item-value" id="r_pph21_netto">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">PTKP (Tidak Kena Pajak)</div>
+                                            <div class="result-item-value" id="r_pph21_ptkp">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Penghasilan Kena Pajak</div>
+                                            <div class="result-item-value blue" id="r_pph21_pkp">Rp 0</div>
+                                        </div>
+                                        <div class="result-item full" style="background: linear-gradient(135deg, #EFF6FF, #F0FDF4);">
+                                            <div class="result-item-label" style="font-size: 13px; font-weight: 600;">PPh 21 Terutang per Bulan</div>
+                                            <div class="result-item-value blue" style="font-size: 28px;" id="r_pph21_pph21">Rp 0</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tarif Table -->
+                                    <table class="tarif-table">
+                                        <thead>
+                                            <tr><th>Penghasilan Kena Pajak per Tahun</th><th>Tarif</th><th>Pajak per Tahun</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="tarif_row_1"><td>s/d Rp 60.000.000</td><td>0%</td><td>Rp 0</td></tr>
+                                            <tr id="tarif_row_2"><td>Rp 60 juta - Rp 250 juta</td><td>5%</td><td>Rp 0</td></tr>
+                                            <tr id="tarif_row_3"><td>Rp 250 juta - Rp 500 juta</td><td>15%</td><td>Rp 0</td></tr>
+                                            <tr id="tarif_row_4"><td>Rp 500 juta - Rp 5 miliar</td><td>25%</td><td>Rp 0</td></tr>
+                                            <tr id="tarif_row_5"><td>di atas Rp 5 miliar</td><td>30%</td><td>Rp 0</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PPh 23 Form -->
+                    <div class="calc-form-section" id="calc-pph23" style="display: none;">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-file-invoice" style="color: var(--success);"></i> Kalkulator PPh 23 — Jasa & Sewa</div>
+                            <span class="badge badge-pribadi">Pribadi</span>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Penerima Penghasilan</label>
+                                    <input type="text" class="form-input" id="pph23_nama" placeholder="Nama atau NIK">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Jenis Jasa</label>
+                                    <select class="form-select" id="pph23_jenis">
+                                        <option value="2">Jasa Konsultasi / Manajemen / Teknik (2%)</option>
+                                        <option value="1.5">Jasa Konstruksi (1.5%)</option>
+                                        <option value="2">Sewa Tanah / Bangunan (2%)</option>
+                                        <option value="2">Royalti / Bunga (2%)</option>
+                                        <option value="0.5">Jasa Elektronik (0.5%)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nilai Transaksi (Sebelum PPh 23)</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph23_nilai" placeholder="0" oninput="hitungPPh23()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">PPh 23 Terutang</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="text" class="form-input prefix" id="pph23_hasil" readonly style="background: var(--bg-main); font-weight: 700; color: var(--success);">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPh 23</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('pph23')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('pph23')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">Nilai Transaksi</div>
+                                            <div class="result-item-value" id="r_pph23_nilai">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Tarif PPh 23</div>
+                                            <div class="result-item-value" id="r_pph23_tarif">2%</div>
+                                        </div>
+                                        <div class="result-item full" style="background: linear-gradient(135deg, #F0FDF4, #ECFDF5);">
+                                            <div class="result-item-label" style="font-size: 13px; font-weight: 600;">PPh 23 Terutang</div>
+                                            <div class="result-item-value green" style="font-size: 28px;" id="r_pph23_pph">Rp 0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PPh Final UMKM Form -->
+                    <div class="calc-form-section" id="calc-pphfinal" style="display: none;">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-store" style="color: #D97706;"></i> Kalkulator PPh Final — UMKM</div>
+                            <span class="badge badge-pribadi">Pribadi</span>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Usaha / WP</label>
+                                    <input type="text" class="form-input" id="pphfinal_nama" placeholder="Nama usaha atau NIK">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Jenis Tarif</label>
+                                    <select class="form-select" id="pphfinal_tarif">
+                                        <option value="0.5">PPh Final 0,5% (PP 23/2018)</option>
+                                        <option value="1">PPh Final 1% (OMZET > Rp 4,8 Miliar)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Omzet per Bulan</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pphfinal_omzet" placeholder="0" oninput="hitungPPhFinal()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">PPh Final Terutang</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="text" class="form-input prefix" id="pphfinal_hasil" readonly style="background: var(--bg-main); font-weight: 700; color: #D97706;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPh Final UMKM</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('pphfinal')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('pphfinal')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">Omzet per Bulan</div>
+                                            <div class="result-item-value" id="r_pphfinal_omzet">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Tarif PPh Final</div>
+                                            <div class="result-item-value" id="r_pphfinal_tarif">0,5%</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">PPh Final per Bulan</div>
+                                            <div class="result-item-value amber" id="r_pphfinal_perbulan">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">PPh Final per Tahun (×12)</div>
+                                            <div class="result-item-value amber" id="r_pphfinal_pertahun">Rp 0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERUSAHAAN Tab Content -->
+                <div id="perusahaanContent" style="display: none;">
+                    <div class="calc-grid">
+                        <div class="calc-card active" onclick="selectCalcPerusahaan(this, 'pph25')">
+                            <div class="calc-card-icon blue"><i class="fas fa-calendar-check"></i></div>
+                            <div class="calc-card-title">PPh 25 Badan</div>
+                            <div class="calc-card-desc">Hitung angsuran PPh 25 untuk badan usaha per bulan</div>
+                        </div>
+                        <div class="calc-card" onclick="selectCalcPerusahaan(this, 'ppn')">
+                            <div class="calc-card-icon green"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <div class="calc-card-title">PPN Keluaran - Masukan</div>
+                            <div class="calc-card-desc">Hitung PPN terutang dari FPK - FPM</div>
+                        </div>
+                        <div class="calc-card" onclick="selectCalcPerusahaan(this, 'pphbadan')">
+                            <div class="calc-card-icon indigo"><i class="fas fa-building"></i></div>
+                            <div class="calc-card-title">PPh Badan Tahunan</div>
+                            <div class="calc-card-desc">Estimasi PPh Badan dari laba bersih</div>
+                        </div>
+                    </div>
+
+                    <!-- PPh 25 Form -->
+                    <div class="calc-form-section" id="calc-pph25">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-calendar-check" style="color: var(--primary-light);"></i> Kalkulator PPh 25 — Angsuran Pajak Badan</div>
+                            <span class="badge badge-perusahaan">Perusahaan</span>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Perusahaan</label>
+                                    <input type="text" class="form-input" id="pph25_nama" placeholder="Contoh: PT Maju Jaya">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">PPh Badan Terutang per Tahun</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph25_terutang" placeholder="0" oninput="hitungPPh25()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">PPh yang sudah Dipotong/dibayar</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pph25_sudah" placeholder="0" oninput="hitungPPh25()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Sisa Kewajiban</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="text" class="form-input prefix" id="pph25_sisa" readonly style="background: var(--bg-main); font-weight: 700; color: var(--primary-light);">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPh 25</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('pph25')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('pph25')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">PPh Badan Terutang (1 tahun)</div>
+                                            <div class="result-item-value" id="r_pph25_terutang">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Sudah Dibayar</div>
+                                            <div class="result-item-value" id="r_pph25_sudah">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Sisa Kewajiban</div>
+                                            <div class="result-item-value blue" id="r_pph25_sisa">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Angsuran per Bulan (sisa ÷ sisa bulan)</div>
+                                            <div class="result-item-value green" id="r_pph25_perbulan">Rp 0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PPN Form -->
+                    <div class="calc-form-section" id="calc-ppn" style="display: none;">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-file-invoice-dollar" style="color: var(--success);"></i> Kalkulator PPN — Keluaran - Masukan</div>
+                            <span class="badge badge-perusahaan">Perusahaan</span>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Perusahaan</label>
+                                    <input type="text" class="form-input" id="ppn_nama" placeholder="Contoh: PT Maju Jaya">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Masa Pajak</label>
+                                    <select class="form-select" id="ppn_masa">
+                                        <option>Januari 2025</option>
+                                        <option>Februari 2025</option>
+                                        <option>Maret 2025</option>
+                                        <option selected>April 2025</option>
+                                        <option>Mei 2025</option>
+                                        <option>Juni 2025</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">DPP PPN Keluaran (FPK)</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="ppn_keluaran" placeholder="0" oninput="hitungPPN()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">DPP PPN Masukan (FPM)</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="ppn_masukan" placeholder="0" oninput="hitungPPN()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPN</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('ppn')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('ppn')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">PPN Keluaran (11% × DPP Keluaran)</div>
+                                            <div class="result-item-value" id="r_ppn_keluaran">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">PPN Masukan (11% × DPP Masukan)</div>
+                                            <div class="result-item-value" id="r_ppn_masukan">Rp 0</div>
+                                        </div>
+                                        <div class="result-item full" style="background: linear-gradient(135deg, #F0FDF4, #ECFDF5);">
+                                            <div class="result-item-label" style="font-size: 13px; font-weight: 600;">PPN Terutang (Keluaran - Masukan)</div>
+                                            <div class="result-item-value green" style="font-size: 28px;" id="r_ppn_terutang">Rp 0</div>
+                                            <div class="result-item-note" id="r_ppn_note">PPN Masukan lebih besar = Klaim Restitusi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PPh Badan Tahunan Form -->
+                    <div class="calc-form-section" id="calc-pphbadan" style="display: none;">
+                        <div class="calc-form-header">
+                            <div class="calc-form-title"><i class="fas fa-building" style="color: var(--indigo);"></i> Kalkulator PPh Badan Tahunan</div>
+                            <span class="badge badge-perusahaan">Perusahaan</span>
+                        </div>
+                        <div class="calc-form-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Perusahaan</label>
+                                    <input type="text" class="form-input" id="pphbadan_nama" placeholder="Contoh: PT Maju Jaya">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tahun Pajak</label>
+                                    <select class="form-select" id="pphbadan_tahun">
+                                        <option>2025</option>
+                                        <option selected>2024</option>
+                                        <option>2023</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Pendapatan Bruto</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pphbadan_bruto" placeholder="0" oninput="hitungPPhBadan()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Biaya Operasional</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pphbadan_biaya" placeholder="0" oninput="hitungPPhBadan()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Koreksi Fiskal (+/-)</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="number" class="form-input prefix" id="pphbadan_fiskal" placeholder="0" oninput="hitungPPhBadan()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Penghasilan Kena Pajak</label>
+                                    <div class="input-wrapper">
+                                        <span class="input-prefix">Rp</span>
+                                        <input type="text" class="form-input prefix" id="pphbadan_pkp" readonly style="background: var(--bg-main); font-weight: 700; color: var(--indigo);">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> Hasil Perhitungan PPh Badan</div>
+                                        <div class="result-actions">
+                                            <button class="btn btn-sm btn-secondary" onclick="exportExcel('pphbadan')"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                            <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('pphbadan')"><i class="fas fa-paper-plane"></i> Kirim ke SPT</button>
+                                        </div>
+                                    </div>
+                                    <div class="result-grid">
+                                        <div class="result-item">
+                                            <div class="result-item-label">Pendapatan Bruto</div>
+                                            <div class="result-item-value" id="r_pphbadan_bruto">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Laba Sebelum Pajak</div>
+                                            <div class="result-item-value" id="r_pphbadan_laba">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Penghasilan Kena Pajak</div>
+                                            <div class="result-item-value blue" id="r_pphbadan_pkp">Rp 0</div>
+                                        </div>
+                                        <div class="result-item">
+                                            <div class="result-item-label">Tarif PPh Badan</div>
+                                            <div class="result-item-value">22%</div>
+                                        </div>
+                                        <div class="result-item full" style="background: linear-gradient(135deg, #EEF2FF, #F5F3FF);">
+                                            <div class="result-item-label" style="font-size: 13px; font-weight: 600;">PPh Badan Terutang</div>
+                                            <div class="result-item-value" style="font-size: 28px; color: var(--indigo);" id="r_pphbadan_pph">Rp 0</div>
+                                            <div class="result-item-note">Tarif 22% sesuai UU HPP (UU 7/2021)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section" id="historySection" style="display: none;">
+                    <div class="calc-form-header" style="border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+                        <div class="calc-form-title"><i class="fas fa-history" style="color: var(--primary-light);"></i> Riwayat Perhitungan</div>
+                        <button class="btn btn-sm btn-secondary" onclick="hideHistory()"><i class="fas fa-times"></i> Tutup</button>
+                    </div>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Klien</th>
+                                <th>Jenis</th>
+                                <th>Jenis Pajak</th>
+                                <th>Hasil</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <tr>
+                                <td>27 Apr 2025</td>
+                                <td>Budi Santoso</td>
+                                <td><span class="badge badge-pribadi">Pribadi</span></td>
+                                <td>PPh 21</td>
+                                <td style="font-weight: 700; color: var(--primary-light);">Rp 525.000/bulan</td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary" onclick="exportExcel('history')"><i class="fas fa-file-excel"></i></button>
+                                    <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('history')"><i class="fas fa-paper-plane"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>26 Apr 2025</td>
+                                <td>PT Maju Jaya</td>
+                                <td><span class="badge badge-perusahaan">Perusahaan</span></td>
+                                <td>PPN</td>
+                                <td style="font-weight: 700; color: var(--success);">Rp 12.500.000</td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary" onclick="exportExcel('history')"><i class="fas fa-file-excel"></i></button>
+                                    <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('history')"><i class="fas fa-paper-plane"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>25 Apr 2025</td>
+                                <td>Siti Rahayu</td>
+                                <td><span class="badge badge-pribadi">Pribadi</span></td>
+                                <td>PPh 23</td>
+                                <td style="font-weight: 700; color: #D97706;">Rp 300.000</td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary" onclick="exportExcel('history')"><i class="fas fa-file-excel"></i></button>
+                                    <button class="btn btn-sm btn-primary" onclick="kirimKeSPT('history')"><i class="fas fa-paper-plane"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Ringkasan Total Pajak -->
+                <div class="summary-section" id="summarySection">
+                    <div class="summary-card">
+                        <div class="summary-header">
+                            <div class="summary-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Ringkasan Total Pajak Klien
+                            </div>
+                            <div class="summary-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="exportSummaryExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                                <button class="btn btn-sm btn-success" onclick="kirimSummaryKeSPT()"><i class="fas fa-paper-plane"></i> Kirim Semua ke SPT</button>
+                            </div>
+                        </div>
+                        <div class="summary-body">
+                            <div class="summary-grid">
+                                <!-- PPh 21 -->
+                                <div class="summary-item pph21">
+                                    <div class="summary-item-header">
+                                        <div class="summary-item-icon blue"><i class="fas fa-calculator"></i></div>
+                                        <div>
+                                            <div class="summary-item-title">PPh 21 Gaji</div>
+                                            <div class="summary-item-subtitle">Karyawan / Pegawai</div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-item-value" id="sum_pph21">Rp 0</div>
+                                    <div class="summary-item-note">per bulan</div>
+                                </div>
+
+                                <!-- PPh 23 -->
+                                <div class="summary-item pph23">
+                                    <div class="summary-item-header">
+                                        <div class="summary-item-icon green"><i class="fas fa-file-invoice"></i></div>
+                                        <div>
+                                            <div class="summary-item-title">PPh 23 Jasa</div>
+                                            <div class="summary-item-subtitle">Konsultasi / Sewa</div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-item-value green" id="sum_pph23">Rp 0</div>
+                                    <div class="summary-item-note">per transaksi</div>
+                                </div>
+
+                                <!-- PPh Final -->
+                                <div class="summary-item pphfinal">
+                                    <div class="summary-item-header">
+                                        <div class="summary-item-icon amber"><i class="fas fa-store"></i></div>
+                                        <div>
+                                            <div class="summary-item-title">PPh Final UMKM</div>
+                                            <div class="summary-item-subtitle">0,5% dari Omzet</div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-item-value amber" id="sum_pphfinal">Rp 0</div>
+                                    <div class="summary-item-note">per bulan</div>
+                                </div>
+
+                                <!-- Total -->
+                                <div class="summary-item total">
+                                    <div class="summary-item-header">
+                                        <div class="summary-item-icon purple"><i class="fas fa-coins"></i></div>
+                                        <div>
+                                            <div class="summary-item-title">TOTAL PAJAK TERUTANG</div>
+                                            <div class="summary-item-subtitle">Gabungan semua jenis pajak</div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-item-value purple" id="sum_total">Rp 0</div>
+                                    <div class="summary-item-note">total kewajiban pajak</div>
+                                </div>
+                            </div>
+
+                            <!-- Detail Table -->
+                            <div class="summary-detail">
+                                <table class="summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Jenis Pajak</th>
+                                            <th>Dasar Pengenaan</th>
+                                            <th>Tarif</th>
+                                            <th>Pajak Terutang</th>
+                                            <th>Frekuensi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="summaryTableBody">
+                                        <tr>
+                                            <td><span class="badge badge-pribadi">PPh 21</span> Gaji Karyawan</td>
+                                            <td id="sum_dpp_pph21">Rp 0</td>
+                                            <td>Progresif (0-30%)</td>
+                                            <td style="font-weight: 700; color: var(--blue);" id="sum_nilai_pph21">Rp 0</td>
+                                            <td>per bulan</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-pribadi">PPh 23</span> Jasa Konsultasi</td>
+                                            <td id="sum_dpp_pph23">Rp 0</td>
+                                            <td>2%</td>
+                                            <td style="font-weight: 700; color: var(--success);" id="sum_nilai_pph23">Rp 0</td>
+                                            <td>per transaksi</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-pribadi">PPh Final</span> UMKM</td>
+                                            <td id="sum_dpp_pphfinal">Rp 0</td>
+                                            <td>0,5%</td>
+                                            <td style="font-weight: 700; color: #D97706;" id="sum_nilai_pphfinal">Rp 0</td>
+                                            <td>per bulan</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" style="text-align: right; font-weight: 700;">TOTAL PAJAK TERUTANG</td>
+                                            <td style="font-weight: 700; color: var(--purple); font-size: 16px;" id="sum_total_foot">Rp 0</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Kirim ke SPT -->
+    <div class="modal-overlay" id="modalKirimSPT">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Kirim Hasil ke SPT & Laporan</h3>
+                <button class="modal-close" onclick="closeModalKirim()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Pilih Klien</label>
+                    <select class="form-select" id="kirimKlien">
+                        <option value="">Pilih klien tujuan</option>
+                        <optgroup label="Klien Pribadi">
+                            <option>Budi Santoso</option>
+                            <option>Siti Rahayu, S.E.</option>
+                            <option>Ahmad Hidayat</option>
+                            <option>Dewi Lestari</option>
+                            <option>Rudi Hermawan</option>
+                        </optgroup>
+                        <optgroup label="Klien Perusahaan">
+                            <option>PT Maju Jaya</option>
+                            <option>PT Global Solusi</option>
+                            <option>CV Sejahtera Abadi</option>
+                            <option>PT Prima Karya</option>
+                            <option>UD Sinar Mandiri</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kirim ke Modul</label>
+                    <div style="display: flex; gap: 12px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" checked> <i class="fas fa-file-invoice" style="color: var(--primary-light);"></i> SPT & Pelaporan
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" checked> <i class="fas fa-chart-bar" style="color: var(--success);"></i> Laporan
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox"> <i class="fas fa-folder-open" style="color: #D97706;"></i> Dokumen
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Catatan</label>
+                    <textarea class="form-input" id="kirimCatatan" rows="2" placeholder="Tambahkan catatan opsional..." style="resize: vertical;"></textarea>
+                </div>
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 12px; margin-top: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--success); font-weight: 500;">
+                        <i class="fas fa-check-circle"></i> Data akan otomatis terisi di form SPT & Laporan klien yang dipilih
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModalKirim()">Batal</button>
+                <button class="btn btn-success" onclick="prosesKirim()"><i class="fas fa-paper-plane"></i> Kirim Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMsg">Berhasil!</span>
+    </div>
+
+    <script>
+        // Format Rupiah
+        function formatRupiah(angka) {
+            return 'Rp ' + Number(angka).toLocaleString('id-ID');
+        }
+
+        // Toggle submenu
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Main Tab Switch
+        function switchMainTab(btn, type) {
+            document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('pribadiContent').style.display = type === 'pribadi' ? '' : 'none';
+            document.getElementById('perusahaanContent').style.display = type === 'perusahaan' ? '' : 'none';
+        }
+
+        // Calculator Select (Pribadi)
+        function selectCalc(card, type) {
+            document.querySelectorAll('#pribadiContent .calc-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            document.querySelectorAll('#pribadiContent .calc-form-section').forEach(f => f.style.display = 'none');
+            document.getElementById('calc-' + type).style.display = '';
+        }
+
+        // Calculator Select (Perusahaan)
+        function selectCalcPerusahaan(card, type) {
+            document.querySelectorAll('#perusahaanContent .calc-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            document.querySelectorAll('#perusahaanContent .calc-form-section').forEach(f => f.style.display = 'none');
+            document.getElementById('calc-' + type).style.display = '';
+        }
+
+        // PTKP Values
+        const ptkp = {
+            'TK/0': 54000000, 'TK/1': 58500000, 'TK/2': 63000000, 'TK/3': 67500000,
+            'K/0': 58500000, 'K/1': 63000000, 'K/2': 67500000, 'K/3': 72000000
+        };
+
+        // ====== PPh 21 ======
+        function hitungPPh21() {
+            const bruto = parseFloat(document.getElementById('pph21_bruto').value) || 0;
+            const ptkpVal = document.getElementById('pph21_ptkp').value;
+            const iuran = parseFloat(document.getElementById('pph21_iuran').value) || 0;
+            const tunjangan = parseFloat(document.getElementById('pph21_tunjangan').value) || 0;
+
+            const biayaJabatan = Math.min(bruto * 0.05, 500000);
+            const nettoBulan = bruto + tunjangan - biayaJabatan - iuran;
+            const nettoTahun = nettoBulan * 12;
+            const ptkpTahun = ptkp[ptkpVal];
+            const pkpTahun = Math.max(0, nettoTahun - ptkpTahun);
+
+            // Tarif progresif
+            let pajak = 0;
+            let sisa = pkpTahun;
+            const tarif = [
+                { max: 60000000, rate: 0 },
+                { max: 250000000, rate: 0.05 },
+                { max: 500000000, rate: 0.15 },
+                { max: 5000000000, rate: 0.25 },
+                { max: Infinity, rate: 0.30 }
+            ];
+
+            let prevMax = 0;
+            let detailPajak = [];
+            for (const t of tarif) {
+                const range = t.max - prevMax;
+                const taxable = Math.min(sisa, range);
+                const tax = taxable * t.rate;
+                pajak += tax;
+                detailPajak.push({ range: t.max, rate: t.rate, tax: tax, taxable: taxable });
+                sisa -= taxable;
+                if (sisa <= 0) break;
+                prevMax = t.max;
+            }
+
+            const pph21Bulan = Math.ceil(pajak / 12);
+
+            // Update display
+            document.getElementById('r_pph21_bruto').textContent = formatRupiah(bruto * 12);
+            document.getElementById('r_pph21_netto').textContent = formatRupiah(nettoTahun);
+            document.getElementById('r_pph21_ptkp').textContent = formatRupiah(ptkpTahun);
+            document.getElementById('r_pph21_pkp').textContent = formatRupiah(pkpTahun);
+            document.getElementById('r_pph21_pph21').textContent = formatRupiah(pph21Bulan) + '/bulan';
+
+            // Update tarif table
+            const rows = document.querySelectorAll('.tarif-table tbody tr');
+            let累计 = 0;
+            detailPajak.forEach((d, i) => {
+                if (rows[i]) {
+                    rows[i].querySelector('td:last-child').textContent = formatRupiah(d.tax);
+                    rows[i].className = d.taxable > 0 ? 'highlight' : '';
+                }
+            });
+
+            // Update summary
+            window._pph21 = pph21Bulan;
+            window._dpp_pph21 = pkpTahun;
+            updateSummary();
+        }
+
+        // ====== PPh 23 ======
+        function hitungPPh23() {
+            const nilai = parseFloat(document.getElementById('pph23_nilai').value) || 0;
+            const jenis = parseFloat(document.getElementById('pph23_jenis').value) || 2;
+            const pph = Math.ceil(nilai * jenis / 100);
+
+            document.getElementById('pph23_hasil').value = formatRupiah(pph);
+            document.getElementById('r_pph23_nilai').textContent = formatRupiah(nilai);
+            document.getElementById('r_pph23_tarif').textContent = jenis + '%';
+            document.getElementById('r_pph23_pph').textContent = formatRupiah(pph);
+
+            // Update summary
+            window._pph23 = pph;
+            window._dpp_pph23 = nilai;
+            updateSummary();
+        }
+
+        // ====== PPh Final UMKM ======
+        function hitungPPhFinal() {
+            const omzet = parseFloat(document.getElementById('pphfinal_omzet').value) || 0;
+            const tarif = parseFloat(document.getElementById('pphfinal_tarif').value) / 100;
+            const pphBulan = Math.ceil(omzet * tarif);
+            const pphTahun = pphBulan * 12;
+
+            document.getElementById('pphfinal_hasil').value = formatRupiah(pphBulan);
+            document.getElementById('r_pphfinal_omzet').textContent = formatRupiah(omzet);
+            document.getElementById('r_pphfinal_tarif').textContent = (tarif * 100).toFixed(1) + '%';
+            document.getElementById('r_pphfinal_perbulan').textContent = formatRupiah(pphBulan);
+            document.getElementById('r_pphfinal_pertahun').textContent = formatRupiah(pphTahun);
+
+            // Update summary
+            window._pphfinal = pphBulan;
+            window._dpp_pphfinal = omzet;
+            updateSummary();
+        }
+
+        // ====== PPh 25 ======
+        function hitungPPh25() {
+            const terutang = parseFloat(document.getElementById('pph25_terutang').value) || 0;
+            const sudah = parseFloat(document.getElementById('pph25_sudah').value) || 0;
+            const sisa = Math.max(0, terutang - sudah);
+            const bulanSisa = 7; // Agustus-Desember
+            const perBulan = Math.ceil(sisa / bulanSisa);
+
+            document.getElementById('pph25_sisa').value = formatRupiah(sisa);
+            document.getElementById('r_pph25_terutang').textContent = formatRupiah(terutang);
+            document.getElementById('r_pph25_sudah').textContent = formatRupiah(sudah);
+            document.getElementById('r_pph25_sisa').textContent = formatRupiah(sisa);
+            document.getElementById('r_pph25_perbulan').textContent = formatRupiah(perBulan) + '/bulan';
+        }
+
+        // ====== PPN ======
+        function hitungPPN() {
+            const keluaran = parseFloat(document.getElementById('ppn_keluaran').value) || 0;
+            const masukan = parseFloat(document.getElementById('ppn_masukan').value) || 0;
+            const ppnK = Math.ceil(keluaran * 0.11);
+            const ppnM = Math.ceil(masukan * 0.11);
+            const terutang = ppnK - ppnM;
+
+            document.getElementById('r_ppn_keluaran').textContent = formatRupiah(ppnK);
+            document.getElementById('r_ppn_masukan').textContent = formatRupiah(ppnM);
+            document.getElementById('r_ppn_terutang').textContent = formatRupiah(Math.abs(terutang));
+            document.getElementById('r_ppn_note').textContent = terutang >= 0 ?
+                'PPN terutang harus dibayar ke kas negara' :
+                'PPN Masukan lebih besar = Klaim Restitusi';
+            document.getElementById('r_ppn_terutang').className = 'result-item-value ' + (terutang >= 0 ? 'green' : 'red');
+        }
+
+        // ====== PPh Badan ======
+        function hitungPPhBadan() {
+            const bruto = parseFloat(document.getElementById('pphbadan_bruto').value) || 0;
+            const biaya = parseFloat(document.getElementById('pphbadan_biaya').value) || 0;
+            const fiskal = parseFloat(document.getElementById('pphbadan_fiskal').value) || 0;
+            const laba = bruto - biaya;
+            const pkp = Math.max(0, laba + fiskal);
+            const pph = Math.ceil(pkp * 0.22);
+
+            document.getElementById('pphbadan_pkp').value = formatRupiah(pkp);
+            document.getElementById('r_pphbadan_bruto').textContent = formatRupiah(bruto);
+            document.getElementById('r_pphbadan_laba').textContent = formatRupiah(laba);
+            document.getElementById('r_pphbadan_pkp').textContent = formatRupiah(pkp);
+            document.getElementById('r_pphbadan_pph').textContent = formatRupiah(pph);
+        }
+
+        // ====== Export Excel ======
+        function exportExcel(type) {
+            showToast('Mendownload file Excel...');
+            // Simulate Excel download
+            setTimeout(() => {
+                showToast('File Excel berhasil didownload!');
+            }, 1500);
+        }
+
+        // ====== Kirim ke SPT ======
+        function kirimKeSPT(type) {
+            document.getElementById('modalKirimSPT').classList.add('active');
+        }
+
+        function closeModalKirim() {
+            document.getElementById('modalKirimSPT').classList.remove('active');
+        }
+
+        function prosesKirim() {
+            const klien = document.getElementById('kirimKlien').value;
+            if (!klien) {
+                showToast('Pilih klien terlebih dahulu!');
+                return;
+            }
+            closeModalKirim();
+            showToast('Berhasil dikirim ke SPT & Laporan ' + klien + '!');
+        }
+
+        // Toast
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // History
+        function showHistory() { document.getElementById('historySection').style.display = ''; }
+        function hideHistory() { document.getElementById('historySection').style.display = 'none'; }
+
+        // Reset
+        function resetCalc() {
+            document.querySelectorAll('.form-input[type="number"], .form-input.prefix').forEach(el => {
+                if (!el.readOnly) el.value = '';
+            });
+            document.querySelectorAll('.result-item-value').forEach(el => {
+                if (!el.textContent.includes('%')) el.textContent = 'Rp 0';
+            });
+            // Reset summary
+            window._pph21 = 0;
+            window._pph23 = 0;
+            window._pphfinal = 0;
+            window._dpp_pph21 = 0;
+            window._dpp_pph23 = 0;
+            window._dpp_pphfinal = 0;
+            updateSummary();
+        }
+
+        // ====== Update Summary ======
+        function updateSummary() {
+            const pph21 = window._pph21 || 0;
+            const pph23 = window._pph23 || 0;
+            const pphfinal = window._pphfinal || 0;
+            const total = pph21 + pph23 + pphfinal;
+
+            // Update cards
+            document.getElementById('sum_pph21').textContent = formatRupiah(pph21);
+            document.getElementById('sum_pph23').textContent = formatRupiah(pph23);
+            document.getElementById('sum_pphfinal').textContent = formatRupiah(pphfinal);
+            document.getElementById('sum_total').textContent = formatRupiah(total);
+
+            // Update table
+            document.getElementById('sum_dpp_pph21').textContent = formatRupiah(window._dpp_pph21 || 0);
+            document.getElementById('sum_dpp_pph23').textContent = formatRupiah(window._dpp_pph23 || 0);
+            document.getElementById('sum_dpp_pphfinal').textContent = formatRupiah(window._dpp_pphfinal || 0);
+            document.getElementById('sum_nilai_pph21').textContent = formatRupiah(pph21);
+            document.getElementById('sum_nilai_pph23').textContent = formatRupiah(pph23);
+            document.getElementById('sum_nilai_pphfinal').textContent = formatRupiah(pphfinal);
+            document.getElementById('sum_total_foot').textContent = formatRupiah(total);
+        }
+
+        // ====== Export Summary Excel ======
+        function exportSummaryExcel() {
+            showToast('Mendownload ringkasan pajak ke Excel...');
+            setTimeout(() => {
+                showToast('Ringkasan pajak berhasil didownload!');
+            }, 1500);
+        }
+
+        // ====== Kirim Summary ke SPT ======
+        function kirimSummaryKeSPT() {
+            document.getElementById('modalKirimSPT').classList.add('active');
+        }
+
+        // Init
+        window._pph21 = 0;
+        window._pph23 = 0;
+        window._pphfinal = 0;
+        window._dpp_pph21 = 0;
+        window._dpp_pph23 = 0;
+        window._dpp_pphfinal = 0;
+        hitungPPh21();
+    </script>
+</body>
+</html>

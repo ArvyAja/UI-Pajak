@@ -1,0 +1,412 @@
+{
+  "lastUpdated": "2025-04-14",
+  "version": "1.0.0",
+  "categories": [
+    {
+      "id": "kup",
+      "name": "Ketentuan Umum Perpajakan",
+      "icon": "fa-landmark",
+      "color": "blue"
+    },
+    {
+      "id": "pph",
+      "name": "Pajak Penghasilan (PPh)",
+      "icon": "fa-money-bill-wave",
+      "color": "green"
+    },
+    {
+      "id": "ppn",
+      "name": "Pajak Pertambahan Nilai (PPN)",
+      "icon": "fa-receipt",
+      "color": "purple"
+    },
+    {
+      "id": "pbb",
+      "name": "Pajak Bumi & Bangunan (PBB)",
+      "icon": "fa-house-chimney",
+      "color": "amber"
+    },
+    {
+      "id": "kup-prosedur",
+      "name": "Tata Cara Perpajakan",
+      "icon": "fa-gavel",
+      "color": "red"
+    },
+    {
+      "id": "lainnya",
+      "name": "Peraturan Lainnya",
+      "icon": "fa-file-lines",
+      "color": "gray"
+    }
+  ],
+  "regulations": [
+    {
+      "id": 1,
+      "category": "kup",
+      "title": "Undang-Undang Nomor 6 Tahun 1983",
+      "shortName": "UU KUP",
+      "description": "Ketentuan Umum dan Tata Cara Perpajakan sebagaimana telah beberapa kali terakhir diubah dengan UU HPP.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "Pasal 1",
+          "title": "Definisi Istilah Perpajakan",
+          "content": "Yang dimaksud dengan 'Pajak' adalah kontribusi wajib kepada negara yang terutang oleh orang pribadi atau badan yang bersifat memaksa berdasarkan undang-undang, dengan tidak mendapat imbalan secara langsung dan digunakan untuk keperluan negara bagi sebesar-besarnya kemakmuran rakyat.",
+          "substance": [
+            "Wajib Pajak adalah orang pribadi atau badan yang menurut ketentuan dalam undang-undang ini dikenakan pajak, termasuk pemungut pajak, pemotong pajak, dan penyuluh pajak.",
+            "Objek Pajak adalah penghasilan, benda, kegiatan atau keadaan termasuk peristiwa yang dikenakan pajak berdasarkan undang-undang.",
+            "Subjek Pajak adalah orang pribadi atau badan yang menurut ketentuan dalam undang-undang ini dikenakan pajak.",
+            "NPWP (Nomor Pokok Wajib Pajak) adalah nomor yang diberikan kepada Wajib Pajak sebagai identitas dalam melaksanakan hak dan kewajiban perpajakannya."
+          ]
+        },
+        {
+          "pasal": "Pasal 2",
+          "title": "Jenis-Jenis Pajak",
+          "content": "Pajak yang dikenakan oleh Pemerintah Pusat terdiri atas Pajak Penghasilan dan Pajak Pertambahan Nilai.",
+          "substance": [
+            "Pajak Penghasilan (PPh) adalah pajak yang dikenakan kepada orang pribadi atau badan atas penghasilan yang diterima atau diperoleh dalam tahun pajak.",
+            "Pajak Pertambahan Nilai (PPN) adalah pajak yang dikenakan atas barang dan jasa yang diperjualbelikan.",
+            "Pajak Bumi dan Bangunan (PBB) adalah pajak yang dikenakan atas bumi dan bangunan.",
+            "Bea Meterai adalah pungutan atas dokumen tertentu dalam rangka penerimaan negara."
+          ]
+        },
+        {
+          "pasal": "Pasal 3",
+          "title": "Objek Pajak Penghasilan",
+          "content": "Yang merupakan objek pajak adalah penghasilan, yaitu setiap tambahan kemampuan ekonomis yang diterima atau diperoleh Wajib Pajak, yang berasal dari Indonesia maupun dari luar Indonesia, yang dapat dipakai untuk konsumsi atau untuk menambah kekayaan Wajib Pajak yang bersangkutan, dengan nama dan dalam bentuk apa pun.",
+          "substance": [
+            "Gaji, upah, tunjangan, honorarium, dan pembayaran lain yang diterima karena pekerjaan.",
+            "Keuntungan usaha, termasuk keuntungan dari penjualan harta.",
+            "Royalti, bunga, dividen, hadiah, dan penghasilan lainnya.",
+            "Penghasilan dari pengalihan harta yang diperoleh secara cuma-cuma atau dengan harga yang lebih rendah dari nilai pasarnya."
+          ]
+        },
+        {
+          "pasal": "Pasal 4",
+          "title": "Penghasilan Kena Pajak",
+          "content": "Penghasilan Kena Pajak adalah penghasilan kotor (bruto) dikurangi penghasilan yang tidak kena pajak.",
+          "substance": [
+            "Penghasilan kotor adalah jumlah seluruh penghasilan, baik yang diterima di Indonesia maupun di luar Indonesia.",
+            "Penghasilan tidak kena pajak (PTKP) diberikan kepada WP orang pribadi.",
+            "PTKP untuk WP tidak kawin: Rp 54.000.000/tahun.",
+            "PTKP untuk WP kawin: Rp 58.500.000/tahun, ditambah Rp 4.500.000 untuk setiap tanggungan (maksimal 3 orang)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "category": "pph",
+      "title": "Undang-Undang Nomor 7 Tahun 2021",
+      "shortName": "UU HPP",
+      "description": "Harmonisasi Peraturan Perpajakan (UU HPP) menggantikan sebagian pasal dalam UU KUP dan UU PPh.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "Pasal 4",
+          "title": "Jenis-Jenis Pajak",
+          "content": "Yang dimaksud dengan pajak adalah Pajak Penghasilan, Pajak Pertambahan Nilai, Bea Keluar, Cukai, dan Pajak Daerah.",
+          "substance": [
+            "PPh 21: Pajak atas penghasilan berupa gaji, upah, honorarium, tunjangan, dan pembayaran lain yang diterima karena pekerjaan.",
+            "PPh 22: Pajak pemotongan atas pembelian barang tertentu oleh instansi pemerintah.",
+            "PPh 23: Pajak atas penghasilan berupa dividen, bunga, royalti, sewa, dan penghasilan lainnya.",
+            "PPh 24: Pajak atas penghasilan dari luar negeri.",
+            "PPh 25: Angsuran PPh terutang yang dibayar setiap bulan.",
+            "PPh 26: Pajak atas penghasilan orang asing yang melakukan kegiatan di Indonesia.",
+            "PPh 29: PPh terutang yang belum tertutup oleh PPh yang dipotong/dipungut."
+          ]
+        },
+        {
+          "pasal": "Pasal 17",
+          "title": "Tarif PPh Badan",
+          "content": "Tarif Pajak Penghasilan atas penghasilan badan adalah sebesar 22% (dua puluh dua persen).",
+          "substance": [
+            "Tarif umum PPh Badan: 22%.",
+            "Untuk badan dengan peredaran bruto tertentu (modal <= Rp 50 miliar) dikenakan tarif 11% di atas Rp 500 juta.",
+            "Penghasilan kena pajak sampai dengan Rp 500 juta dikenakan tarif 0%.",
+            "Tarif PPh Final untuk UMKM: 0,5% dari omset bruto (sampai dengan omset Rp 4,8 miliar).",
+            "Dividen yang dibagikan kepada WP badan dalam negeri tidak dikenakan PPh."
+          ]
+        },
+        {
+          "pasal": "Pasal 21",
+          "title": "Pemotongan PPh Pasal 21",
+          "content": "PPh Pasal 21 dipotong oleh pemberi kerja atas penghasilan berupa gaji, upah, honorarium, tunjangan, dan pembayaran lain yang diterima karena hubungan kerja.",
+          "substance": [
+            "Tarif progresif: 0% (sampai PTKP), 5%, 10%, 15%, 25%, 30%.",
+            "PTKP 2024: Tidak Kawin Rp 60 juta, Kawin Rp 64,5 juta, ditambah Rp 4,5 juta/tanggungan.",
+            "Pemotongan dilakukan setiap bulan oleh pemberi kerja.",
+            "Wajib menyampaikan SPT Masa PPh 21.",
+            "Bisa menggunakan metode anual atau bulanan."
+          ]
+        },
+        {
+          "pasal": "Pasal 23",
+          "title": "Pemotongan PPh Pasal 23",
+          "content": "PPh Pasal 23 dipotong atas pembayaran untuk penyerahan jasa, penggunaan hak, atau penghasilan lainnya.",
+          "substance": [
+            "Tarif pemotongan: 2% dari jumlah bruto.",
+            "Termasuk: deviden, bunga, royalti, sewa, hadiah dan penghargaan.",
+            "Wajib menyampaikan SPT Masa PPh 23.",
+            "Pemotong adalah pihak yang melakukan pembayaran."
+          ]
+        },
+        {
+          "pasal": "Pasal 24",
+          "title": "PPh Pasal 24 - Pajak Penghasilan Luar Negeri",
+          "content": "PPh yang dibayar di luar negeri dapat dikreditkan terhadap PPh terutang di Indonesia.",
+          "substance": [
+            "Kredit pajak luar negeri dilakukan oleh WP Orang Pribadi dan WP Badan.",
+            "Batas kredit pajak luar negeri: PPh terutang di Indonesia.",
+            "Dokumen bukti pembayaran pajak luar negeri harus dilampirkan.",
+            "Kelebihan kredit tidak dapat dikembalikan."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "category": "ppn",
+      "title": "Undang-Undang Nomor 8 Tahun 1983",
+      "shortName": "UU PPN",
+      "description": "Pajak Pertambahan Nilai atas Barang dan Jasa dan Pajak Penjualan atas Barang Mewah.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "Pasal 1",
+          "title": "Definisi PPN",
+          "content": "Pajak Pertambahan Nilai adalah pajak yang dikenakan atas barang dan jasa yang diperjualbelikan.",
+          "substance": [
+            "PPN adalah pungutan atas ValueType added (pertambahan nilai) yang terjadi pada setiap mata rantai peredaran barang dan jasa.",
+            "Barang Kena Pajak (BKP) adalah benda berwujud yang bergerak atau tidak bergerak, serta benda tidak berwujud tertentu.",
+            "Jasa Kena Pajak (JKP) adalah jasa yang dilakukan oleh orang pribadi atau badan.",
+            "Pengusaha Kena Pajak (PKP) adalah pengusaha yang melakukan penyerahan BKP dan/atau JKP yang wajib mendaftarkan diri sebagai PKP."
+          ]
+        },
+        {
+          "pasal": "Pasal 4",
+          "title": "Tarif PPN",
+          "content": "Tarif PPN adalah 11% (sebelas persen) dari Dasar Pengenaan Pajak.",
+          "substance": [
+            "Tarif PPN: 11% berlaku sejak 1 April 2022.",
+            "Tarif PPN Ditanggung Pemerintah (DTP): 50% (berlaku sementara).",
+            "Dasar Pengenaan Pajak (DPP) adalah harga jual, penggantian, atau nilai transaksi.",
+            "PPN yang terutang = Tarif x DPP.",
+            "DPP PPN ditambah PPh Pasal 23 (untuk jasa tertentu)."
+          ]
+        },
+        {
+          "pasal": "Pasal 7",
+          "title": "Pembebasan PPN",
+          "content": "Barang dan jasa tertentu dibebaskan dari pengenaan PPN.",
+          "substance": [
+            "Barang dan jasa yang dibebaskan PPN antara lain: makanan/minuman olahan, emas batangan untuk investasi.",
+            "Jasa kesehatan, jasa pendidikan, jasa keuangan, jasa asuransi dibebaskan PPN.",
+            "Barang yang diekspor dibebaskan PPN (PPh out).",
+            "Barang impor untuk keperluan tertentu dapat dibebaskan PPN."
+          ]
+        },
+        {
+          "pasal": "Pasal 9",
+          "title": "Pajak Masukan dan Pajak Keluaran",
+          "content": "PKP dapat memungut PPN atas penyerahan BKP/JKP (Pajak Keluaran) dan membayar PPN atas pembelian BKP/JKP (Pajak Masukan).",
+          "substance": [
+            "Pajak Keluaran (PK) adalah PPN yang dipungut oleh PKP atas penyerahan BKP/JKP.",
+            "Pajak Masukan (PM) adalah PPN yang dibayar oleh PKP atas pembelian BKP/JKP.",
+            "PPh Pasal 23 dapat menjadi Pajak Masukan.",
+            "Pajak Masukan tidak dapat dikreditkan untuk pengadaan barang/jasa tertentu.",
+            "Sisa Lebih Pajak Masukan (SLHPM) dapat diklaim untuk restitusi."
+          ]
+        },
+        {
+          "pasal": "Pasal 13",
+          "title": "Faktur Pajak",
+          "content": "PKP wajib menerbitkan Faktur Pajak atas penyerahan BKP/JKP.",
+          "substance": [
+            "Faktur Pajak wajib diterbitkan untuk setiap penyerahan BKP/JKP.",
+            "Faktur Pajak harus memuat: NPWP penjual, nama, alamat, tanggal, Nomor Seri Faktur Pajak.",
+            "Faktur Pajak dapat berupa Dokumen Faktur Elektronik (e-Faktur).",
+            "Faktur Pajak harus diterbitkan paling lambat tanggal 15 bulan berikutnya.",
+            "Sanksi: Denda 50% dari PPh terutang atau minimal Rp 500.000."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "category": "pbb",
+      "title": "Undang-Undang Nomor 12 Tahun 1994",
+      "shortName": "UU PBB",
+      "description": "Pajak Bumi dan Bangunan yang dikenakan atas bumi dan bangunan milik Wajib Pajak.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "Pasal 1",
+          "title": "Definisi PBB",
+          "content": "PBB adalah pajak yang dikenakan atas bumi dan/atau bangunan yang dimiliki, dikuasai, dan/atau dimanfaatkan oleh orang pribadi atau badan.",
+          "substance": [
+            "Bumi adalah permukaan bumi dan air yang terdapat di atasnya, termasuk kekayaan alam yang terkandung di dalamnya.",
+            "Bangunan adalah constructible thing yang berdiri di atas bumi dan/atau air, termasuk rumah tinggal, gedung, dan bangunan lainnya.",
+            "PBB dikenakan untuk bumi dan bangunan yang berada di wilayah Indonesia.",
+            "Dasar pengenaan PBB adalah NJOP (Nilai Jual Objek Pajak)."
+          ]
+        },
+        {
+          "pasal": "Pasal 2",
+          "title": "Tarif PBB",
+          "content": "Tarif PBB adalah sebesar 0,3% (nol koma tiga persen) dari NJOP bumi dan/atau bangunan.",
+          "substance": [
+            "Tarif PBB: 0,3% dari NJOP.",
+            "NJOP ditetapkan oleh Menteri Keuangan atas nama Pemerintah.",
+            "NJOP bumi dan bangunan ditetapkan berdasarkan potensi ekonomisnya.",
+            "NJOP bumi berbeda dengan NJOP bangunan.",
+            "PBB tidak dikenakan untuk bumi dan bangunan tertentu yang dibebaskan."
+          ]
+        },
+        {
+          "pasal": "Pasal 7",
+          "title": "Pembebasan PBB",
+          "content": "Bebas PBB adalah pembebasan yang diberikan untuk jangka waktu tertentu.",
+          "substance": [
+            "Bebas PBB untuk jangka waktu paling lama 10 tahun.",
+            "Dapat diberikan untuk proyek strategis nasional.",
+            "Diberikan untuk daerah tertentu yang memerlukan stimulus ekonomi.",
+            "Diberikan atas permohonan Wajib Pajak."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "category": "kup-prosedur",
+      "title": "Tata Cara Perpajakan",
+      "shortName": "Tata Cara Pajak",
+      "description": "Prosedur dan mekanisme pemenuhan kewajiban perpajakan.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "Pasal 3 UU KUP",
+          "title": "Kewajiban Mendaftarkan Diri",
+          "content": "Setiap WP wajib mendaftarkan diri untuk memperoleh NPWP.",
+          "substance": [
+            "WP orang pribadi wajib mendaftarkan diri sebelum Tahun Pajak berikutnya.",
+            "WP badan wajib mendaftarkan diri dalam waktu paling lambat 1 bulan setelah didirikan.",
+            "WP yang tidak mendaftarkan diri dikenakan sanksi administrasi.",
+            "Pendaftaran dilakukan secara elektronik melalui DJP Online."
+          ]
+        },
+        {
+          "pasal": "Pasal 3A UU KUP",
+          "title": "Kewajiban Membayar Pajak",
+          "content": "Pajak terutang harus dibayar paling lambat tanggal 15 bulan berikutnya.",
+          "substance": [
+            "PPh 21: dibayar paling lambat tanggal 10 bulan berikutnya.",
+            "PPh 23: dibayar paling lambat tanggal 15 bulan berikutnya.",
+            "PPN: dibayar paling lambat tanggal 20 bulan berikutnya.",
+            "PPh 25: dibayar secara angsuran setiap bulan.",
+            "Keterlambatan pembayaran dikenakan bunga 2% per bulan."
+          ]
+        },
+        {
+          "pasal": "Pasal 3B UU KUP",
+          "title": "Kewajiban Menyampaikan SPT",
+          "content": "WP wajib menyampaikan SPT Tahunan dan SPT Masa secara elektronik.",
+          "substance": [
+            "SPT Tahunan PPh OP: paling lambat 31 Maret tahun berikutnya.",
+            "SPT Tahunan PPh Badan: paling lambat 4 bulan setelah tahun pajak berakhir.",
+            "SPT Masa PPh 21: paling lambat tanggal 20 bulan berikutnya.",
+            "SPT Masa PPN: paling lambat tanggal 20 bulan berikutnya.",
+            "Penyampaian SPT dilakukan secara elektronik (e-Filing)."
+          ]
+        },
+        {
+          "pasal": "Pasal 8 UU KUP",
+          "title": "Surat Ketetapan Pajak",
+          "content": "Surat Ketetapan Pajak (SKP) diterbitkan oleh Kantor Pelayanan Pajak.",
+          "substance": [
+            "SKP terdiri atas: SKPKB, SKPDKB, SKPKBT, SKPDKBT.",
+            "SKPKB: Surat Ketetapan Pajak Kurang Bayar.",
+            "SKPDKB: Surat Pemberitahuan Ketetapan Pajak Kurang Bayar.",
+            "SKPKBT: Surat Ketetapan Pajak Kurang Bayar Tambahan.",
+            "WP dapat melakukan keberatan dalam waktu 3 bulan sejak SKP diterbitkan."
+          ]
+        },
+        {
+          "pasal": "Pasal 9 UU KUP",
+          "title": "Keberatan dan Banding",
+          "content": "WP dapat mengajukan keberatan terhadap SKP yang diterbitkan.",
+          "substance": [
+            "Keberatan diajukan dalam waktu 3 bulan sejak SKP diterbitkan.",
+            "Keberatan ditujukan kepada Kepala KPP yang menerbitkan SKP.",
+            "Jika keberatan ditolak, WP dapat mengajukan banding ke Pengadilan Pajak.",
+            "Banding diajukan dalam waktu 3 bulan sejak keputusan keberatan.",
+            "Keputusan banding dapat diajukan Kasasi ke Mahkamah Agung."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "category": "lainnya",
+      "title": "Peraturan Pelaksana",
+      "shortName": "PP & PMK",
+      "description": "Peraturan Pemerintah (PP) dan Peraturan Menteri Keuangan (PMK) terkait.",
+      "status": "berlaku",
+      "lastUpdate": "2024-01-01",
+      "articles": [
+        {
+          "pasal": "PP 23 Tahun 2018",
+          "title": "PPh Final UMKM",
+          "content": "Pajak Penghasilan Final atas penghasilan dari usaha yang diterima atau diperoleh Wajib Pajak yang memiliki peredaran bruto tertentu.",
+          "substance": [
+            "Tarif PPh Final UMKM: 0,5% dari omset bruto.",
+            "Berlaku untuk WP dengan peredaran bruto sampai dengan Rp 4,8 miliar per tahun.",
+            "Tarif ini menggantikan tarif progresif untuk UMKM.",
+            "WP yang memilih PPh Final tidak dapat dikreditkan dengan PPh terutang.",
+            "Berlaku sejak 1 Juli 2018."
+          ]
+        },
+        {
+          "pasal": "PMK 18/2021",
+          "title": "e-Faktur dan e-Bupot",
+          "content": "Peraturan tentang Pelaksanaan Peraturan Menteri Keuangan tentang Faktur Pajak Elektronik.",
+          "substance": [
+            "Faktur Pajak Elektronik (e-Faktur) wajib digunakan oleh semua PKP.",
+            "e-Faktur diterbitkan melalui sistem DJP Online.",
+            "Bukti Potong Elektronik (e-Bupot) untuk PPh 23.",
+            "Penyedia Application Service Provider (ASP) dapat digunakan.",
+            "Masa transisi dari manual ke elektronik."
+          ]
+        },
+        {
+          "pasal": "PP 36 Tahun 2023",
+          "title": "PPh Final UMKM (Update)",
+          "content": "Perubahan atas PP 23 Tahun 2018 tentang PPh Final untuk UMKM.",
+          "substance": [
+            "Perpanjangan pemberlakuan tarif 0,5% untuk UMKM.",
+            "Batas peredaran bruto tetap Rp 4,8 miliar per tahun.",
+            "WP UMKM dapat memilih antara PPh Final atau PPh Normal.",
+            "Pilihan berlaku selama satu tahun pajak.",
+            "Harus dilaporkan dalam SPT Tahunan."
+          ]
+        },
+        {
+          "pasal": "PMK 131/2021",
+          "title": "Konsinyasi PPh Final",
+          "content": "Tata cara penyetoran Pajak Penghasilan Final atas penghasilan dari usaha.",
+          "substance": [
+            "WP dapat melakukan konsinyasi PPh Final ke pengadilan.",
+            "Berlaku jika terjadi sengketa pajak.",
+            "Konsinyasi dilakukan dalam waktu 7 hari setelah putusan.",
+            "Jumlah yang dikonsinyasi adalah PPh yang dipersengketakan."
+          ]
+        }
+      ]
+    }
+  ]
+}

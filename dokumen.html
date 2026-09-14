@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxPro - Dokumen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+        .header-actions { display: flex; gap: 12px; }
+
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary:hover { background: var(--primary); }
+        .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-main); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; align-items: center; gap: 16px; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .stat-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .stat-icon.green { background: var(--success-bg); color: var(--success); }
+        .stat-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .stat-icon.red { background: var(--danger-bg); color: var(--danger); }
+        .stat-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+        .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Tab + Search */
+        .controls-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .tab-filter { display: flex; gap: 4px; background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; }
+        .tab-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .tab-btn.active { background: var(--primary-light); color: white; }
+        .tab-btn:hover:not(.active) { background: var(--bg-main); }
+        .tab-btn .count { background: rgba(255,255,255,0.2); padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; }
+        .tab-btn.active .count { background: rgba(255,255,255,0.3); }
+        .tab-btn:not(.active) .count { background: var(--bg-main); color: var(--text-muted); }
+        .search-filter { display: flex; gap: 8px; }
+        .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 12px; width: 240px; display: flex; align-items: center; gap: 8px; }
+        .search-input input { border: none; outline: none; flex: 1; font-family: inherit; font-size: 12px; }
+        .filter-btn { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: white; font-family: inherit; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+        .filter-btn:hover { background: var(--bg-main); }
+        .filter-btn.active { background: #EFF6FF; color: var(--blue); border-color: var(--blue); }
+
+        /* Main Grid */
+        .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+
+        /* Document List */
+        .doc-section { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .section-title .dot.blue { background: var(--blue); }
+        .section-title .dot.green { background: var(--success); }
+        .section-title .dot.amber { background: var(--amber); }
+        .section-title .dot.red { background: var(--danger); }
+        .doc-body { padding: 16px 20px; }
+
+        /* View Toggle */
+        .view-toggle { display: flex; gap: 4px; }
+        .view-btn { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; }
+        .view-btn.active { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+
+        /* Doc Card */
+        .doc-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; transition: all 0.2s; cursor: pointer; }
+        .doc-card:hover { border-color: var(--primary-light); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08); }
+        .doc-card:last-child { margin-bottom: 0; }
+        .doc-card-top { display: flex; align-items: flex-start; gap: 14px; }
+        .doc-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .doc-icon.pdf { background: #FEE2E2; color: #DC2626; }
+        .doc-icon.xlsx { background: #D1FAE5; color: #059669; }
+        .doc-icon.doc { background: #DBEAFE; color: #2563EB; }
+        .doc-icon.img { background: #FEF3C7; color: #D97706; }
+        .doc-icon.folder { background: #E0E7FF; color: #4F46E5; }
+        .doc-info { flex: 1; min-width: 0; }
+        .doc-name { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .doc-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .doc-meta { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .doc-meta span { display: flex; align-items: center; gap: 4px; }
+        .doc-badges { display: flex; gap: 6px; flex-shrink: 0; }
+        .badge { padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+        .badge-pribadi { background: #EFF6FF; color: var(--blue); }
+        .badge-perusahaan { background: var(--success-bg); color: var(--success); }
+        .badge-verified { background: var(--success-bg); color: var(--success); }
+        .badge-pending { background: #FEF3C7; color: #D97706; }
+        .badge-expired { background: var(--danger-bg); color: var(--danger); }
+        .badge-draft { background: var(--bg-main); color: var(--text-muted); }
+        .doc-actions { display: flex; gap: 6px; margin-top: 12px; }
+        .doc-action { padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 10px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .doc-action:hover { background: var(--bg-main); border-color: var(--primary-light); color: var(--primary-light); }
+        .doc-action.primary { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+        .doc-action.primary:hover { background: var(--primary); }
+
+        /* Folder View */
+        .folder-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .folder-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .folder-card:hover { border-color: var(--primary-light); background: #F8FAFC; }
+        .folder-card-icon { font-size: 32px; margin-bottom: 8px; color: var(--indigo); }
+        .folder-card-name { font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .folder-card-count { font-size: 10px; color: var(--text-muted); }
+
+        /* Category List */
+        .category-list { padding: 16px 20px; }
+        .category-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 4px; cursor: pointer; transition: all 0.2s; }
+        .category-item:hover { background: var(--bg-main); }
+        .category-item.active { background: #EFF6FF; }
+        .category-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .category-icon.blue { background: #EFF6FF; color: var(--blue); }
+        .category-icon.green { background: var(--success-bg); color: var(--success); }
+        .category-icon.amber { background: var(--warning-bg); color: #D97706; }
+        .category-icon.red { background: var(--danger-bg); color: var(--danger); }
+        .category-icon.purple { background: #EEF2FF; color: var(--purple); }
+        .category-icon.indigo { background: #EEF2FF; color: var(--indigo); }
+        .category-info { flex: 1; }
+        .category-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+        .category-count { font-size: 10px; color: var(--text-muted); }
+        .category-arrow { color: var(--text-muted); font-size: 10px; }
+
+        /* Upload Zone */
+        .upload-zone { margin: 16px 20px; padding: 24px; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; cursor: pointer; transition: all 0.2s; }
+        .upload-zone:hover { border-color: var(--primary-light); background: #F8FAFC; }
+        .upload-zone-icon { font-size: 28px; color: var(--text-muted); margin-bottom: 8px; }
+        .upload-zone-text { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+        .upload-zone-hint { font-size: 10px; color: var(--text-muted); }
+
+        /* Recent Activity */
+        .activity-list { padding: 16px 20px; }
+        .activity-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .activity-info { flex: 1; }
+        .activity-text { font-size: 11px; color: var(--text-primary); line-height: 1.4; }
+        .activity-text strong { font-weight: 600; }
+        .activity-time { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Storage */
+        .storage-section { margin: 16px 20px; padding: 16px; background: var(--bg-main); border-radius: var(--radius); }
+        .storage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .storage-title { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .storage-value { font-size: 11px; color: var(--text-muted); }
+        .storage-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+        .storage-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--blue)); border-radius: 3px; transition: width 0.3s; }
+        .storage-detail { display: flex; gap: 12px; margin-top: 8px; }
+        .storage-item { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+        .storage-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: var(--radius-lg); width: 100%; max-width: 520px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; border: none; background: var(--bg-main); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+        .modal-close:hover { background: var(--border); }
+        .modal-body { padding: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 13px; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary-light); }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border); }
+
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } .folder-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .folder-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-name">TaxPro</span>
+                        <span class="logo-subtitle">Konsultan Pajak</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Klien</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="klien-pribadi.html" class="nav-item submenu"><i class="fas fa-user"></i><span>Klien Pribadi</span></a>
+                    <a href="klien-perusahaan.html" class="nav-item submenu"><i class="fas fa-building"></i><span>Klien Perusahaan</span></a>
+                </div>
+                <a href="spt.html" class="nav-item"><i class="fas fa-file-invoice"></i><span>SPT & Pelaporan</span></a>
+                <a href="konsultasi.html" class="nav-item"><i class="fas fa-comments"></i><span>Konsultasi</span></a>
+                <a href="dokumen.html" class="nav-item active"><i class="fas fa-folder-open"></i><span>Dokumen</span></a>
+                <a href="ai-assistant.html" class="nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="kalkulator.html" class="nav-item"><i class="fas fa-calculator"></i><span>Kalkulator Pajak</span></a>
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSubmenu(this)"><span>Keuangan</span><i class="fas fa-chevron-down"></i></div>
+                    <a href="pendapatan.html" class="nav-item submenu"><i class="fas fa-arrow-trend-up"></i><span>Pendapatan</span></a>
+
+                    <a href="laba-rugi.html" class="nav-item submenu"><i class="fas fa-scale-balanced"></i><span>Laba/Rugi</span></a>
+                     <a href="piutang.html" class="nav-item submenu"><i class="fas fa-hand-holding-dollar"></i><span>Piutang</span></a>
+                     <a href="laporan-keuangan.html" class="nav-item submenu"><i class="fas fa-chart-pie"></i><span>Laporan Keuangan</span></a>
+                </div>
+                 <a href="kalender.html" class="nav-item"><i class="fas fa-calendar-days"></i><span>Kalender</span></a>
+                 <a href="laporan.html" class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+                <a href="peraturan.html" class="nav-item"><i class="fas fa-gavel"></i><span>Peraturan Pajak</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-gear"></i><span>Pengaturan</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-illustration"><div class="illustration-icon"><i class="fas fa-file-invoice-dollar"></i><i class="fas fa-shield-halved"></i></div></div>
+                <p class="sidebar-tagline">Teman terbaik untuk kepatuhan pajak klien Anda.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <header class="header">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Cari dokumen, klien, atau tag..."></div>
+                <div class="header-right">
+                    <div class="notification-bell"><i class="fas fa-bell"></i><span class="badge">3</span></div>
+                    <div class="user-profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" class="user-avatar">
+                        <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Admin Konsultan Pajak</span></div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1><i class="fas fa-folder-open" style="color: var(--primary-light); margin-right: 8px;"></i> Dokumen</h1>
+                        <p>Kelola semua dokumen pajak klien pribadi dan perusahaan</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-upload"></i> Upload</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                        <div>
+                            <div class="stat-value">348</div>
+                            <div class="stat-label">Total Dokumen</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                            <div class="stat-value">312</div>
+                            <div class="stat-label">Terverifikasi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">Menunggu Verifikasi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div>
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Perlu Diperbarui</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls-row">
+                    <div class="tab-filter">
+                        <button class="tab-btn active" onclick="filterTab(this, 'semua')">Semua <span class="count">348</span></button>
+                        <button class="tab-btn" onclick="filterTab(this, 'pribadi')"><i class="fas fa-user"></i> Pribadi <span class="count">156</span></button>
+                        <button class="tab-btn" onclick="filterTab(this, 'perusahaan')"><i class="fas fa-building"></i> Perusahaan <span class="count">192</span></button>
+                    </div>
+                    <div class="search-filter">
+                        <div class="search-input">
+                            <i class="fas fa-search" style="color: var(--text-muted); font-size: 12px;"></i>
+                            <input type="text" placeholder="Cari dokumen..." id="searchDoc" onkeyup="searchDocument()">
+                        </div>
+                        <button class="filter-btn" id="filterSPT" onclick="toggleFilter('spt')"><i class="fas fa-file-invoice"></i> SPT</button>
+                        <button class="filter-btn" id="filterBukti" onclick="toggleFilter('bukti')"><i class="fas fa-receipt"></i> Bukti Potong</button>
+                        <button class="filter-btn" id="filterInvoice" onclick="toggleFilter('invoice')"><i class="fas fa-file-invoice-dollar"></i> Invoice</button>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="main-grid">
+                    <!-- Left: Document List -->
+                    <div>
+                        <div class="doc-section">
+                            <div class="section-header">
+                                <div class="section-title">
+                                    <div class="dot blue"></div>
+                                    Semua Dokumen
+                                </div>
+                                <div class="view-toggle">
+                                    <button class="view-btn active" onclick="setView('list')"><i class="fas fa-list"></i></button>
+                                    <button class="view-btn" onclick="setView('grid')"><i class="fas fa-th-large"></i></button>
+                                </div>
+                            </div>
+                            <div class="doc-body" id="docList">
+                                <!-- Document Cards -->
+                                <div class="doc-card" data-type="pribadi" data-cat="spt">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>SPT_Tahunan_BudiSantoso_2024.pdf</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-user"></i> Budi Santoso</span>
+                                                <span><i class="fas fa-calendar"></i> 25 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 2.4 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-verified">Terverifikasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-share-alt"></i> Share</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="perusahaan" data-cat="spt">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon xlsx"><i class="fas fa-file-excel"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>SPT_PPN_PtMajuJaya_Apr2025.xlsx</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-building"></i> PT Maju Jaya</span>
+                                                <span><i class="fas fa-calendar"></i> 27 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 1.8 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-pending">Menunggu</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-check"></i> Verifikasi</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="pribadi" data-cat="bukti">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>Bukti_Potong_PPh23_SitiRahayu.pdf</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-user"></i> Siti Rahayu, S.E.</span>
+                                                <span><i class="fas fa-calendar"></i> 22 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 856 KB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-verified">Terverifikasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="perusahaan" data-cat="invoice">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon doc"><i class="fas fa-file-word"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>Kontrak_Konsultasi_CvSejahtera.docx</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-building"></i> CV Sejahtera Abadi</span>
+                                                <span><i class="fas fa-calendar"></i> 20 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 3.2 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-verified">Terverifikasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="pribadi" data-cat="spt">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>SPT_Tahunan_AhmadHidayat_2024.pdf</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-user"></i> Ahmad Hidayat</span>
+                                                <span><i class="fas fa-calendar"></i> 18 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 1.9 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-expired">Expired</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-redo"></i> Perbarui</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="perusahaan" data-cat="spt">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon xlsx"><i class="fas fa-file-excel"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>SPT_PPh21_PtGlobal_Apr2025.xlsx</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-building"></i> PT Global Solusi</span>
+                                                <span><i class="fas fa-calendar"></i> 15 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 2.1 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-verified">Terverifikasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="perusahaan" data-cat="bukti">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon img"><i class="fas fa-file-image"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>Faktur_Pajak_PtPrimaKarya.jpg</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-building"></i> PT Prima Karya</span>
+                                                <span><i class="fas fa-calendar"></i> 12 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 4.5 MB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-perusahaan">Perusahaan</span>
+                                            <span class="badge badge-draft">Draft</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-edit"></i> Edit</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card" data-type="pribadi" data-cat="bukti">
+                                    <div class="doc-card-top">
+                                        <div class="doc-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                        <div class="doc-info">
+                                            <div class="doc-name"><span>Bukti_Potong_PPh21_DewiLestari.pdf</span></div>
+                                            <div class="doc-meta">
+                                                <span><i class="fas fa-user"></i> Dewi Lestari</span>
+                                                <span><i class="fas fa-calendar"></i> 10 Apr 2025</span>
+                                                <span><i class="fas fa-hdd"></i> 920 KB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-badges">
+                                            <span class="badge badge-pribadi">Pribadi</span>
+                                            <span class="badge badge-verified">Terverifikasi</span>
+                                        </div>
+                                    </div>
+                                    <div class="doc-actions">
+                                        <button class="doc-action primary"><i class="fas fa-eye"></i> Lihat</button>
+                                        <button class="doc-action"><i class="fas fa-download"></i> Download</button>
+                                        <button class="doc-action"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="right-sidebar" style="display: flex; flex-direction: column; gap: 24px;">
+                        <!-- Upload Zone -->
+                        <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+                            <div class="section-header">
+                                <div class="section-title"><div class="dot blue"></div> Upload Dokumen</div>
+                            </div>
+                            <div class="upload-zone" onclick="openModal()">
+                                <div class="upload-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                <div class="upload-zone-text"><strong>Klik untuk upload</strong> atau drag & drop</div>
+                                <div class="upload-zone-hint">PDF, XLSX, DOCX, JPG, PNG (Max 10MB)</div>
+                            </div>
+                        </div>
+
+                        <!-- Categories -->
+                        <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+                            <div class="section-header">
+                                <div class="section-title"><div class="dot green"></div> Kategori</div>
+                            </div>
+                            <div class="category-list">
+                                <div class="category-item active" onclick="filterCategory('semua')">
+                                    <div class="category-icon blue"><i class="fas fa-folder"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">Semua Dokumen</div>
+                                        <div class="category-count">348 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                                <div class="category-item" onclick="filterCategory('spt')">
+                                    <div class="category-icon blue"><i class="fas fa-file-invoice"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">SPT & Surat Pajak</div>
+                                        <div class="category-count">124 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                                <div class="category-item" onclick="filterCategory('bukti')">
+                                    <div class="category-icon green"><i class="fas fa-receipt"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">Bukti Potong</div>
+                                        <div class="category-count">86 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                                <div class="category-item" onclick="filterCategory('invoice')">
+                                    <div class="category-icon amber"><i class="fas fa-file-invoice-dollar"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">Invoice & Faktur</div>
+                                        <div class="category-count">72 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                                <div class="category-item" onclick="filterCategory('kontrak')">
+                                    <div class="category-icon purple"><i class="fas fa-file-contract"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">Kontrak & Perjanjian</div>
+                                        <div class="category-count">45 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                                <div class="category-item" onclick="filterCategory('lainnya')">
+                                    <div class="category-icon indigo"><i class="fas fa-file-alt"></i></div>
+                                    <div class="category-info">
+                                        <div class="category-name">Lainnya</div>
+                                        <div class="category-count">21 dokumen</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right category-arrow"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Storage -->
+                        <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+                            <div class="section-header">
+                                <div class="section-title"><div class="dot amber"></div> Penyimpanan</div>
+                            </div>
+                            <div class="storage-section" style="margin: 16px 20px;">
+                                <div class="storage-header">
+                                    <span class="storage-title">Penggunaan Storage</span>
+                                    <span class="storage-value">4.2 GB / 10 GB</span>
+                                </div>
+                                <div class="storage-bar">
+                                    <div class="storage-fill" style="width: 42%;"></div>
+                                </div>
+                                <div class="storage-detail">
+                                    <div class="storage-item"><div class="storage-dot" style="background: var(--blue);"></div> PDF (1.8 GB)</div>
+                                    <div class="storage-item"><div class="storage-dot" style="background: var(--success);"></div> Excel (1.2 GB)</div>
+                                    <div class="storage-item"><div class="storage-dot" style="background: var(--amber);"></div> Lainnya (1.2 GB)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+                            <div class="section-header">
+                                <div class="section-title"><div class="dot red"></div> Aktivitas Terbaru</div>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-avatar" style="background: var(--success-bg); color: var(--success);">MJ</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text"><strong>PT Maju Jaya</strong> mengupload SPT PPN</div>
+                                        <div class="activity-time">27 Apr 2025 • 14:32</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-avatar" style="background: #EFF6FF; color: var(--blue);">BS</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text"><strong>Budi Santoso</strong> dokumen diverifikasi</div>
+                                        <div class="activity-time">25 Apr 2025 • 10:15</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-avatar" style="background: #EEF2FF; color: var(--indigo);">SR</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text"><strong>Siti Rahayu</strong> mengupload Bukti Potong PPh 23</div>
+                                        <div class="activity-time">22 Apr 2025 • 09:45</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-avatar" style="background: var(--success-bg); color: var(--success);">GS</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text"><strong>PT Global Solusi</strong> dokumen expired</div>
+                                        <div class="activity-time">20 Apr 2025 • 16:20</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Upload -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Upload Dokumen Baru</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">File</label>
+                    <div class="upload-zone" style="margin: 0; padding: 20px;">
+                        <div class="upload-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="upload-zone-text">Klik atau drag file ke sini</div>
+                        <div class="upload-zone-hint">PDF, XLSX, DOCX, JPG, PNG (Max 10MB)</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Jenis Klien</label>
+                        <select class="form-select" id="jenisKlien" onchange="filterKlien()">
+                            <option value="">Pilih jenis klien</option>
+                            <option value="pribadi">Pribadi (OP)</option>
+                            <option value="perusahaan">Perusahaan (PT/CV/UD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Klien</label>
+                        <select class="form-select" id="daftarKlien">
+                            <option value="">Pilih klien</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Kategori Dokumen</label>
+                        <select class="form-select">
+                            <option value="">Pilih kategori</option>
+                            <option>SPT & Surat Pajak</option>
+                            <option>Bukti Potong</option>
+                            <option>Invoice & Faktur</option>
+                            <option>Kontrak & Perjanjian</option>
+                            <option>Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tahun Pajak</label>
+                        <select class="form-select">
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Catatan</label>
+                    <textarea class="form-textarea" placeholder="Tambahkan catatan untuk dokumen ini..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal()"><i class="fas fa-upload"></i> Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay')?.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        function toggleSubmenu(element) { element.parentElement.classList.toggle('collapsed'); }
+
+        // Tab Filter
+        function filterTab(btn, type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.doc-card').forEach(card => {
+                if (type === 'semua') { card.style.display = ''; return; }
+                card.style.display = card.dataset.type === type ? '' : 'none';
+            });
+        }
+
+        // Category Filter
+        function filterCategory(cat) {
+            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.doc-card').forEach(card => {
+                if (cat === 'semua') { card.style.display = ''; return; }
+                card.style.display = card.dataset.cat === cat ? '' : 'none';
+            });
+        }
+
+        // Search
+        function searchDocument() {
+            const q = document.getElementById('searchDoc').value.toLowerCase();
+            document.querySelectorAll('.doc-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        // View Toggle
+        function setView(view) {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Klien filter
+        const klienData = {
+            pribadi: ['Budi Santoso', 'Siti Rahayu, S.E.', 'Ahmad Hidayat', 'Dewi Lestari', 'Rudi Hermawan'],
+            perusahaan: ['PT Maju Jaya', 'PT Global Solusi', 'CV Sejahtera Abadi', 'PT Prima Karya', 'UD Sinar Mandiri']
+        };
+        function filterKlien() {
+            const jenis = document.getElementById('jenisKlien').value;
+            const select = document.getElementById('daftarKlien');
+            select.innerHTML = '<option value="">Pilih klien</option>';
+            if (jenis && klienData[jenis]) {
+                klienData[jenis].forEach(k => { const opt = document.createElement('option'); opt.value = k; opt.textContent = k; select.appendChild(opt); });
+            }
+        }
+
+        function toggleFilter(type) {
+            const btn = document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1));
+            btn.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
