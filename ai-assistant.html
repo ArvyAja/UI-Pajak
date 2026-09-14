@@ -24,7 +24,7 @@
         .btn-ghost:hover { background: var(--bg-main); }
 
         /* AI Chat Layout */
-        .ai-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; height: calc(100vh - 200px); min-height: 500px; }
+        .ai-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; height: calc(100vh - 160px); min-height: 500px; }
 
         /* Left Sidebar - History */
         .ai-sidebar { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
@@ -86,7 +86,7 @@
         .ai-response-title i { color: var(--primary-light); }
         .ai-response-list { list-style: none; padding: 0; margin: 0; }
         .ai-response-list li { font-size: 11px; color: var(--text-secondary); padding: 4px 0; display: flex; align-items: flex-start; gap: 6px; }
-        .ai-response-list li::before { content: '•'; color: var(--primary-light); font-weight: bold; }
+        .ai-response-list li::before { content: 'ï¿½'; color: var(--primary-light); font-weight: bold; }
 
         .ai-code-block { background: #1E293B; color: #E2E8F0; padding: 14px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.5; margin-top: 10px; overflow-x: auto; }
         .ai-code-block .keyword { color: #93C5FD; }
@@ -426,15 +426,15 @@
                             <li>Penghasilan Bruto: Rp 15.000.000/bulan</li>
                             <li>Penghasilan Tidak Kena Pajak (PTKP): Rp 54.000.000/tahun = Rp 4.500.000/bulan</li>
                             <li>Penghasilan Kena Pajak: Rp 15.000.000 - Rp 4.500.000 = <strong>Rp 10.500.000</strong></li>
-                            <li>PPh 21 = Rp 10.500.000 × 5% (tarif progresif) = <strong>Rp 525.000/bulan</strong></li>
+                            <li>PPh 21 = Rp 10.500.000 ï¿½ 5% (tarif progresif) = <strong>Rp 525.000/bulan</strong></li>
                         </ul>
                     </div>
                     <br>Tarif PPh 21 Pasal 17 UU HPP:
-                    <br>• 0% untuk penghasilan s/d Rp 60 juta/tahun
-                    <br>• 5% untuk Rp 60 juta - Rp 250 juta/tahun
-                    <br>• 15% untuk Rp 250 juta - Rp 500 juta/tahun
-                    <br>• 25% untuk Rp 500 juta - Rp 5 miliar/tahun
-                    <br>• 30% untuk di atas Rp 5 miliar/tahun`;
+                    <br>ï¿½ 0% untuk penghasilan s/d Rp 60 juta/tahun
+                    <br>ï¿½ 5% untuk Rp 60 juta - Rp 250 juta/tahun
+                    <br>ï¿½ 15% untuk Rp 250 juta - Rp 500 juta/tahun
+                    <br>ï¿½ 25% untuk Rp 500 juta - Rp 5 miliar/tahun
+                    <br>ï¿½ 30% untuk di atas Rp 5 miliar/tahun`;
             }
 
             if (q.includes('pph 23') || q.includes('jasa')) {
@@ -451,9 +451,9 @@
                         </ul>
                     </div>
                     <br><strong>Yang wajib memotong:</strong>
-                    <br>• Badan pemerintah
-                    <br>• Bentuk usaha tetap (BUT)
-                    <br>• Pihak yang membayar penghasilan sehubungan dengan kegiatan usaha<br><br>
+                    <br>ï¿½ Badan pemerintah
+                    <br>ï¿½ Bentuk usaha tetap (BUT)
+                    <br>ï¿½ Pihak yang membayar penghasilan sehubungan dengan kegiatan usaha<br><br>
                     <span class="ai-tag blue">UU HPP</span> <span class="ai-tag green">PMK 18/2021</span>`;
             }
 
@@ -462,17 +462,17 @@
                     <div class="ai-response-card">
                         <div class="ai-response-title"><i class="fas fa-file-alt"></i> Jenis SPT</div>
                         <ul class="ai-response-list">
-                            <li><strong>1770</strong> — Untuk Orang Pribadi (OP) yang menjalankan usaha/jasa</li>
-                            <li><strong>1770 S</strong> — Untuk OP yang tidak menjalankan usaha</li>
-                            <li><strong>1771</strong> — Untuk Badan Usaha (PT, CV, UD, dll)</li>
-                            <li><strong>1772</strong> — Untuk BUT (Bentuk Usaha Tetap)</li>
+                            <li><strong>1770</strong> ï¿½ Untuk Orang Pribadi (OP) yang menjalankan usaha/jasa</li>
+                            <li><strong>1770 S</strong> ï¿½ Untuk OP yang tidak menjalankan usaha</li>
+                            <li><strong>1771</strong> ï¿½ Untuk Badan Usaha (PT, CV, UD, dll)</li>
+                            <li><strong>1772</strong> ï¿½ Untuk BUT (Bentuk Usaha Tetap)</li>
                         </ul>
                     </div>
                     <br><strong>Tahapan pengisian SPT 1770:</strong>
-                    <br>1. Isi Lampiran I — Penghasilan dan Pengurangan
-                    <br>2. Isi Lampiran II — Usaha dan/atau Pekerjaan Bebas
-                    <br>3. Isi Lampiran III — Penghasilan Lainnya
-                    <br>4. Isi SPT utama — Hitung pajak terutang
+                    <br>1. Isi Lampiran I ï¿½ Penghasilan dan Pengurangan
+                    <br>2. Isi Lampiran II ï¿½ Usaha dan/atau Pekerjaan Bebas
+                    <br>3. Isi Lampiran III ï¿½ Penghasilan Lainnya
+                    <br>4. Isi SPT utama ï¿½ Hitung pajak terutang
                     <br>5. Lapor melalui e-Filing atau e-FORM<br><br>
                     <span class="ai-tag amber">Deadline: 30 April 2025</span>`;
             }
@@ -483,16 +483,16 @@
                     <div class="ai-response-card">
                         <div class="ai-response-title"><i class="fas fa-hand-holding-dollar"></i> Fasilitas UMKM</div>
                         <ul class="ai-response-list">
-                            <li><strong>PPh Final 0,5%</strong> — Dari omzet (berlaku hingga Desember 2025)</li>
-                            <li><strong>PPh Final 1%</strong> — Dari omzet untuk WPOP dengan omzet tertentu</li>
-                            <li><strong>PPTKP Rp 4,8 miliar</strong> — Penghasilan Kena Pajak sampai Rp 4,8 miliar</li>
-                            <li><strong>PPN Tidak Dipungut</strong> — Untuk transaksi tertentu UMKM</li>
+                            <li><strong>PPh Final 0,5%</strong> ï¿½ Dari omzet (berlaku hingga Desember 2025)</li>
+                            <li><strong>PPh Final 1%</strong> ï¿½ Dari omzet untuk WPOP dengan omzet tertentu</li>
+                            <li><strong>PPTKP Rp 4,8 miliar</strong> ï¿½ Penghasilan Kena Pajak sampai Rp 4,8 miliar</li>
+                            <li><strong>PPN Tidak Dipungut</strong> ï¿½ Untuk transaksi tertentu UMKM</li>
                         </ul>
                     </div>
                     <br><strong>Syarat UMKM:</strong>
-                    <br>• Omzet maksimal Rp 4,8 miliar/tahun
-                    <br>• Memiliki NIB (Nomor Induk Berusaha)
-                    <br>• Terdaftar sebagai PKP atau non-PKP<br><br>
+                    <br>ï¿½ Omzet maksimal Rp 4,8 miliar/tahun
+                    <br>ï¿½ Memiliki NIB (Nomor Induk Berusaha)
+                    <br>ï¿½ Terdaftar sebagai PKP atau non-PKP<br><br>
                     <span class="ai-tag green">UU Cipta Kerja</span> <span class="ai-tag blue">UU HPP</span>`;
             }
 
@@ -510,10 +510,10 @@
                         </ul>
                     </div>
                     <br><strong>Dokumen yang diperlukan:</strong>
-                    <br>• e-Faktur (FPK dan FPM)
-                    <br>• Buku Pembelian dan Buku Penjualan
-                    <br>• Invoice dari supplier
-                    <br>• Kwitansi pembayaran<br><br>
+                    <br>ï¿½ e-Faktur (FPK dan FPM)
+                    <br>ï¿½ Buku Pembelian dan Buku Penjualan
+                    <br>ï¿½ Invoice dari supplier
+                    <br>ï¿½ Kwitansi pembayaran<br><br>
                     <span class="ai-tag amber">Deadline: 20 hari setelah masa pajak berakhir</span>`;
             }
 
@@ -523,15 +523,15 @@
                     <div class="ai-response-card">
                         <div class="ai-response-title"><i class="fas fa-user-check"></i> Prinsip Self Assessment</div>
                         <ul class="ai-response-list">
-                            <li><strong>Menghitung</strong> — WP menghitung sendiri pajak terutang</li>
-                            <li><strong>Membayar</strong> — WP membayar pajak tepat waktu</li>
-                            <li><strong>Melapor</strong> — WP melaporkan SPT tepat waktu</li>
+                            <li><strong>Menghitung</strong> ï¿½ WP menghitung sendiri pajak terutang</li>
+                            <li><strong>Membayar</strong> ï¿½ WP membayar pajak tepat waktu</li>
+                            <li><strong>Melapor</strong> ï¿½ WP melaporkan SPT tepat waktu</li>
                         </ul>
                     </div>
                     <br><strong>Konsekuensi pelanggaran:</strong>
-                    <br>• Sanksi administrasi (denda)
-                    <br>• Sanksi pidana (untuk WP yang lalai/tidak jujur)
-                    <br>• Bunga keterlambatan`;
+                    <br>ï¿½ Sanksi administrasi (denda)
+                    <br>ï¿½ Sanksi pidana (untuk WP yang lalai/tidak jujur)
+                    <br>ï¿½ Bunga keterlambatan`;
             }
 
             if (q.includes('deadline') || q.includes('tenggat') || q.includes('jatuh tempo')) {
@@ -539,17 +539,17 @@
                     <div class="ai-response-card">
                         <div class="ai-response-title"><i class="fas fa-calendar-alt"></i> Deadline Pajak</div>
                         <ul class="ai-response-list">
-                            <li><strong>SPT Masa PPN</strong> — Tanggal 20 setiap bulan berikutnya</li>
-                            <li><strong>SPT Masa PPh 21/23</strong> — Tanggal 10 bulan berikutnya</li>
-                            <li><strong>SPT Tahunan OP (1770/1770S)</strong> — 30 April 2025</li>
-                            <li><strong>SPT Tahunan Badan (1771)</strong> — 30 April 2025</li>
-                            <li><strong>SPT Tahunan PPh 23</strong> — 31 Januari 2025</li>
+                            <li><strong>SPT Masa PPN</strong> ï¿½ Tanggal 20 setiap bulan berikutnya</li>
+                            <li><strong>SPT Masa PPh 21/23</strong> ï¿½ Tanggal 10 bulan berikutnya</li>
+                            <li><strong>SPT Tahunan OP (1770/1770S)</strong> ï¿½ 30 April 2025</li>
+                            <li><strong>SPT Tahunan Badan (1771)</strong> ï¿½ 30 April 2025</li>
+                            <li><strong>SPT Tahunan PPh 23</strong> ï¿½ 31 Januari 2025</li>
                         </ul>
                     </div>
                     <br><strong>Cara pelaporan:</strong>
-                    <br>• e-Filing melalui DJP Online
-                    <br>• e-FORM untuk SPT tertentu
-                    <br>• KPP setempat (untuk kasus tertentu)<br><br>
+                    <br>ï¿½ e-Filing melalui DJP Online
+                    <br>ï¿½ e-FORM untuk SPT tertentu
+                    <br>ï¿½ KPP setempat (untuk kasus tertentu)<br><br>
                     <span class="ai-tag red">? Pastikan lapor sebelum deadline!</span>`;
             }
 
