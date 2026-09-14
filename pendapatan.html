@@ -484,17 +484,19 @@
         document.getElementById('modalOverlay')?.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const mainArea = document.getElementById('mainArea');
             const overlay = document.getElementById('sidebarOverlay');
+            const mainArea = document.getElementById('mainArea');
             const hamburger = document.querySelector('.hamburger-btn');
-            if (window.innerWidth <= 768) {
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
                 sidebar.classList.toggle('open');
-                if (overlay) overlay.classList.toggle('active');
-                if (hamburger) hamburger.classList.toggle('hidden');
+                overlay.classList.toggle('active');
+                hamburger.classList.toggle('hidden', sidebar.classList.contains('open'));
             } else {
                 sidebar.classList.toggle('collapsed');
                 mainArea.classList.toggle('expanded');
-                if (hamburger) hamburger.classList.toggle('hidden');
+                hamburger.classList.toggle('hidden', !sidebar.classList.contains('collapsed'));
             }
         }
 
