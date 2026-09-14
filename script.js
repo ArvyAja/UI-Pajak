@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCharts();
     initNavigation();
     initCalendar();
+    restoreSidebarScroll();
 });
 
 /* Initialize Charts */
@@ -305,4 +306,17 @@ function initCalendar() {
 /* Notification Bell */
 document.querySelector('.notification-bell')?.addEventListener('click', function() {
     alert('Notifikasi:\n1. SPT Masa PPN - PT Maju Jaya (2 jam lalu)\n2. Invoice #INV-0048 (4 jam lalu)\n3. Konsultasi Pajak - CV Sejahtera Abadi (6 jam lalu)');
+});
+
+/* Sidebar Scroll Position */
+function restoreSidebarScroll() {
+    const saved = localStorage.getItem('sidebarScrollTop');
+    const sidebarNav = document.querySelector('.sidebar-nav');
+    if (sidebarNav && saved) {
+        sidebarNav.scrollTop = parseInt(saved);
+    }
+}
+
+document.querySelector('.sidebar-nav')?.addEventListener('scroll', function() {
+    localStorage.setItem('sidebarScrollTop', this.scrollTop);
 });
