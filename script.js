@@ -288,7 +288,7 @@ function initNavigation() {
 /* Toggle Submenu */
 function toggleSubmenu(element) {
     const section = element.parentElement;
-    section.classList.toggle('collapsed');
+    section.classList.toggle('expanded');
 }
 
 /* Calendar */
